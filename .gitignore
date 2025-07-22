@@ -1,0 +1,8 @@
+zan_env/
+.env
+**/__pycache__/
+__pycache__/
+*.py[cod]
+*.pyo
+*.log
+*.sqlite3
