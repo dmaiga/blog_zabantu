@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Bienvenue {{ user.first_name }}</h2>
+
+  <!-- Section Articles -->
+  <div class="card mt-4">
+    <div class="card-header bg-primary text-white">Mes Articles</div>
+    <div class="card-body">
+      <p>Gérez vos articles publiés ou en brouillon.</p>
+      <a href="{% url 'article_list' %}" class="btn btn-outline-primary">📚 Voir mes articles</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

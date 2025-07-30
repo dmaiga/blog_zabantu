@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.title }}{% endblock %}
+{% block content %}
+<article>
+    <h2>{{ article.title }}</h2>
+    <p><small>Par {{ article.author }} — {{ article.created_at|date:"d M Y" }}</small></p>
+    <div>{{ article.content|linebreaks }}</div>
+
+    {% if article.pdf_file %}
+    <p class="mt-3">
+        <a class="btn btn-outline-primary" href="{{ article.pdf_file.url }}" target="_blank">Voir le PDF</a>
+    </p>
+    {% endif %}
+</article>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Dashboard Administrateur</h2>
+
+  <!-- Section Gestion des Articles -->
+  <div class="card mt-4">
+    <div class="card-header bg-success text-white">Gestion des articles</div>
+    <div class="card-body">
+      <p>Accédez à tous les articles du site, publiés ou non.</p>
+      <a href="{% url 'article_list' %}" class="btn btn-outline-success">📝 Gérer les articles</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

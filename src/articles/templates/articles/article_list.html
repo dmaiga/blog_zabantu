@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Mes articles</h2>
+  <a href="{% url 'article_create' %}" class="btn btn-success mb-3">Créer un nouvel article</a>
+
+  {% if articles %}
+    <ul class="list-group">
+      {% for article in articles %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <a href="{% url 'article_detail' slug=article.slug %}">{{ article.title }}</a>
+          <span>
+            <a href="{% url 'article_update' slug=article.slug %}" class="btn btn-sm btn-outline-secondary">✏️</a>
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Vous n’avez encore publié aucun article.</p>
+  {% endif %}
+</div>
+{% endblock %}

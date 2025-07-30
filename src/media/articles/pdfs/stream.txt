@@ -1,0 +1,222 @@
+#Dockerfile.kafka-connect
+FROM confluentinc/cp-kafka-connect:7.4.0
+
+# Installer plugin Kafka Connect MongoDB (official by MongoDB)
+RUN confluent-hub install --no-prompt mongodb/kafka-connect-mongodb:1.11.0
+
+# Installer plugin Kafka Connect HDFS 
+RUN confluent-hub install --no-prompt confluentinc/kafka-connect-hdfs:5.5.14
+
+# Définir le chemin des plugins
+ENV CONNECT_PLUGIN_PATH="/usr/share/java,/usr/share/confluent-hub-components"
+
+# Optionnel : Copie des fichiers config si besoin
+#COPY hadood-conf/ /etc/kafka-connect/
+# Créer le répertoire de scripts
+USER root
+RUN mkdir -p /scripts
+# Copie des connecteurs personnalisés 
+
+COPY ./mongo-sink.json /scripts/mongo-sink.json
+COPY ./hdfs-sink.json /scripts/hdfs-sink.json
+RUN chmod +x /scripts/post-connectors.sh
+
+
+USER appuser
+# Lancer Kafka Connect, attendre qu'il soit prêt, puis exécuter le script d'enregistrement
+CMD ["bash", "-c", "/etc/confluent/docker/run & sleep 5 && /scripts/post-connectors.sh && wait"]
+
+#mongo-sink.json
+
+{
+  "name": "mongo-sink-connector",
+  "config": {
+    "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
+    "tasks.max": "1",
+    "topics": "user_clicks",
+    "connection.uri": "mongodb://mongo:27017",
+    "database": "uie_ecommerce",
+    
+    "collection": "user_clicks_events",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter.schemas.enable": "false",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "document.id.strategy": "com.mongodb.kafka.connect.sink.processor.id.strategy.BsonOidStrategy", 
+    "writemodel.strategy": "com.mongodb.kafka.connect.sink.writemodel.strategy.InsertOneDefaultStrategy"
+  }
+}
+
+
+#hdfs-sink.json
+
+{
+  "name": "hdfs-sink-connector",
+  "config": {
+    "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
+    "tasks.max": "1",
+    "topics": "user_clicks",
+
+    "hdfs.url": "hdfs://namenode:8020",
+    "hadoop.conf.dir": "/etc/hadoop/conf",
+    "hdfs.authentication.kerberos": "false",
+
+    "flush.size": "3",
+    "topics.dir": "/kafka-connect/uie_ecommerce",
+
+    "format.class": "io.confluent.connect.hdfs.json.JsonFormat",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+
+    "partitioner.class": "io.confluent.connect.storage.partitioner.TimeBasedPartitioner",
+    "path.format": "'year'=YYYY/'month'=MM/'day'=dd/'hour'=HH",
+    "locale": "en",
+    "timezone": "UTC",
+    "partition.duration.ms": "3600000",
+
+    "schema.compatibility": "NONE"
+  }
+}
+
+#connect-distributed.properties
+
+bootstrap.servers=kafka:9092
+group.id=kafka-connect-group
+key.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable=false
+value.converter.schemas.enable=false
+config.storage.topic=connect-configs
+offset.storage.topic=connect-offsets
+status.storage.topic=connect-status
+config.storage.replication.factor=1
+offset.storage.replication.factor=1
+status.storage.replication.factor=1
+plugin.path=C:\\Users\\Admin\\By_me\\projet_bigdata\\services\\kafka-mongo\\plugins
+
+
+# =========== Stream =========
+ # --- KAFKA + ZOOKEEPER ---
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - stack-net
+    
+
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
+    hostname: kafka
+   
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,LISTENER_2://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,LISTENER_2://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_2:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      CONFLUENT_SUPPORT_CUSTOMER_ID: "anonymous"
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+     
+    networks:
+      - stack-net
+    #
+ 
+   
+  # --- KAFKA CONNECT ---
+  kafka-connect:
+    build:
+      context: ./services/kafka-mongo/
+      dockerfile: Dockerfile.kafka-connect
+    container_name: kafka-connect
+    hostname: kafka-connect
+    ports:
+      - "8083:8083"
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka:29092
+      CONNECT_REST_PORT: 8083
+      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect
+      CONNECT_GROUP_ID: "kafka-connect-group"
+      CONNECT_CONFIG_STORAGE_TOPIC: connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: connect-status
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_AUTO_CREATE_TOPICS_ENABLE: "true"
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
+      HADOOP_CONF_DIR: /etc/hadoop/conf
+      HDFS_URL: hdfs://namenode:8020
+      HDFS_USER: root
+      KAFKA_JMX_PORT: 35000
+      KAFKA_JMX_HOSTNAME: localhost
+      
+          
+    volumes:
+      - ./services/kafka-mongo/hadoop-conf:/etc/hadoop/conf
+      - kafka_connect_data:/kafka/connect/data
+    networks:
+      - stack-net
+
+# ==== kafka-connect-init ======
+  kafka-connect-init:
+    container_name: kafka-connect-init
+    image: curlimages/curl:latest
+    depends_on:
+      - kafka-connect
+    entrypoint: sh
+    command: -c "sleep 20 && sh /scripts/post-connectors.sh"
+    volumes:
+      - ./services/kafka-mongo:/scripts
+    networks:
+      - stack-net
+
+
+#--- click producteur ---
+  click-producer:
+    container_name: click-producer
+    build:
+      context: services/kafka-mongo
+      dockerfile: Dockerfile.click-producer
+    depends_on:
+      - kafka
+    command: ["./wait-for-kafka.sh", "python", "simulate_click_stream.py"]
+    networks:
+      - stack-net
+  # --- MONGODB ---
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    hostname: mongo
+    volumes:
+      - mongodb-data:/data/db
+    command: ["mongod", "--replSet", "rs0"]
+    ports:
+      - "27017:27017"
+    networks:
+      - stack-net
+  # ==== mongo-init-replica 
+  mongo-init-replica:
+    container_name: mongo-init-replica
+    image: mongo:6.0
+    depends_on:
+      - mongo
+    entrypoint: ["bash", "-c", "sleep 5 && mongosh --host mongo:27017 --eval 'rs.initiate()'"]
+    networks:
+      - stack-net
+
+

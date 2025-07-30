@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Articles publiés{% endblock %}
+{% block content %}
+<h2>Articles publiés</h2>
+<ul class="list-group">
+    {% for article in articles %}
+        <li class="list-group-item">
+            <h4><a href="{% url 'public_article_detail' article.slug %}">{{ article.title }}</a></h4>
+            <small>Par {{ article.author }} — {{ article.created_at|date:"d M Y" }}</small>
+        </li>
+    {% empty %}
+        <li class="list-group-item">Aucun article disponible.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

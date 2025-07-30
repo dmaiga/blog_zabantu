@@ -18,7 +18,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_USER_MODEL = 'users.CustomUser'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-LOGIN_URL = 'login' 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/users/profile/'
+LOGOUT_REDIRECT_URL = 'login'
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -42,7 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'articles',
-    'taggit',
+    'site_web',
+   
+    
 ]
 
 MIDDLEWARE = [
@@ -60,7 +66,7 @@ ROOT_URLCONF = 'zabantu.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
