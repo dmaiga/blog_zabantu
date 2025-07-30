@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'users',
     'articles',
     'site_web',
+    'tinymce',
    
     
 ]
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'articles.middleware.AutoPublishMiddleware',
 ]
 
 ROOT_URLCONF = 'zabantu.urls'

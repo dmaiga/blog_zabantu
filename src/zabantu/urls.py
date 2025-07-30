@@ -19,13 +19,16 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 from users.views import CustomLoginView 
+from site_web.views import public_article_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('tinymce/', include('tinymce.urls')),
     path('auth/', CustomLoginView.as_view(), name='login'),  
     path('users/', include('users.urls')),              
     path('articles/', include('articles.urls')),
-    path('', include('site_web.urls')),
+    path('zabantu/', include('site_web.urls')),
+    path('',  public_article_list, name='public_article_list'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

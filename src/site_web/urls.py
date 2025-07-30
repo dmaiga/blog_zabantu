@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import article_list_public, article_detail_public
+from .views import public_article_list, public_article_detail
 
 urlpatterns = [
-    path('blog/', article_list_public, name='public_article_list'),
-    path('blog/<slug:slug>/', article_detail_public, name='public_article_detail'),
+    path('blog/', public_article_list, name='public_article_list'),
+    path('blog/<slug:slug>/', public_article_detail, name='public_article_detail'),
 ]

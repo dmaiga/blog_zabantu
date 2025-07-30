@@ -9,3 +9,4 @@ class ArticleAdmin(admin.ModelAdmin):
     search_fields = ('title', 'content', 'author__username')
     prepopulated_fields = {'slug': ('title',)}
     readonly_fields = ('created_at', 'updated_at')
+

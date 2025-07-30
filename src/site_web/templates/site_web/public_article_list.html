@@ -1,15 +1,40 @@
-{% extends 'base.html' %}
-{% block title %}Articles publiés{% endblock %}
+{% extends "base.html" %}
 {% block content %}
-<h2>Articles publiés</h2>
-<ul class="list-group">
+
+<div class="container mt-5">
+  <h2 class="mb-4">Articles du blog</h2>
+
+  <!-- Filtres -->
+  <div class="mb-3">
+    <a href="?type=seminaire" class="btn btn-sm {% if category == 'seminaire' %}btn-primary{% else %}btn-outline-primary{% endif %}">Séminaires Guelekan</a>
+    <a href="?type=analyse" class="btn btn-sm {% if category == 'analyse' %}btn-primary{% else %}btn-outline-primary{% endif %}">Analyses</a>
+    <a href="?type=publication" class="btn btn-sm {% if category == 'publication' %}btn-primary{% else %}btn-outline-primary{% endif %}">Publications</a>
+    <a href="." class="btn btn-sm btn-outline-secondary">Tous</a>
+  </div>
+
+  <!-- Liste des articles -->
+  <div class="row">
     {% for article in articles %}
-        <li class="list-group-item">
-            <h4><a href="{% url 'public_article_detail' article.slug %}">{{ article.title }}</a></h4>
-            <small>Par {{ article.author }} — {{ article.created_at|date:"d M Y" }}</small>
-        </li>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">{{ article.title }}</h5>
+            {% if article.cover_image %}
+  <img src="{{ article.cover_image.url }}" class="card-img-top" alt="Image de couverture">
+{% endif %}
+
+            <p class="card-text">{{ article.content|truncatewords:30|safe }}</p>
+            <a href="{% url 'public_article_detail' article.slug %}" class="btn btn-sm btn-outline-dark">Lire plus</a>
+          </div>
+          <div class="card-footer text-muted small">
+            Publié le {{ article.created_at|date:"d M Y" }} par {{ article.author }}
+          </div>
+        </div>
+      </div>
     {% empty %}
-        <li class="list-group-item">Aucun article disponible.</li>
+      <p>Aucun article pour cette catégorie.</p>
     {% endfor %}
-</ul>
+  </div>
+</div>
+
 {% endblock %}
