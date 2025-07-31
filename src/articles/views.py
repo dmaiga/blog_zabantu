@@ -21,7 +21,7 @@ def generate_unique_slug(title):
         i += 1
     return slug
 # articles/views.py (ajouter)
-@login_required
+
 def media_library(request):
     media_files = list_media_files()
     return render(request, 'articles/media_library.html', {'media_files': media_files})

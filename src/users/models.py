@@ -34,3 +34,18 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})"
+    
+    def get_public_profile(self):
+        """Retourne les données du profil public"""
+        return {
+            'full_name': f"{self.first_name} {self.last_name}",
+            'job': f"{self.job_title} - {self.department}" if self.job_title and self.department else self.job_title or self.department or "",
+            'bio': self.bio,
+            'profile_picture': self.profile_picture.url if self.profile_picture else '/static/profiles/default.png',
+            'social_links': {
+                'facebook': self.social_facebook,
+                'linkedin': self.social_linkedin,
+                'twitter': self.social_twitter
+            },
+            'join_date': self.date_started
+        }   

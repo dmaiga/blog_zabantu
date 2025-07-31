@@ -1,40 +1,149 @@
-{% extends "base.html" %}
+{% extends 'base_public.html' %}
+
+{% block title %}{{ member.first_name }} {{ member.last_name }} | Zabantu{% endblock %}
+
+{% block banner_title %}{{ member.first_name }} {{ member.last_name }}{% endblock %}
+{% block banner_subtitle %}{% if member.job_title %}{{ member.job_title }}{% endif %}{% endblock %}
+
 {% block content %}
+<style>
+    .member-profile {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .member-header {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .member-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--zabantu-light);
+    }
+    
+    .member-info {
+        flex: 1;
+    }
+    
+    .member-name {
+        color: var(--zabantu-primary);
+        margin-bottom: 0.5rem;
+    }
+    
+    .member-job {
+        color: var(--zabantu-secondary);
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+    
+    .member-social {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .social-icon {
+        color: var(--zabantu-primary);
+        font-size: 1.2rem;
+        transition: all 0.3s;
+    }
+    
+    .social-icon:hover {
+        color: var(--zabantu-secondary);
+        transform: translateY(-2px);
+    }
+    
+    .member-bio {
+        line-height: 1.7;
+        padding: 1rem 0;
+        border-top: 1px solid #eee;
+        margin-top: 2rem;
+    }
+    
+    .member-meta {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .member-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .member-social {
+            justify-content: center;
+        }
+    }
+</style>
 
-<div class="container mt-5">
-  <h2 class="mb-4">Articles du blog</h2>
-
-  <!-- Filtres -->
-  <div class="mb-3">
-    <a href="?type=seminaire" class="btn btn-sm {% if category == 'seminaire' %}btn-primary{% else %}btn-outline-primary{% endif %}">Séminaires Guelekan</a>
-    <a href="?type=analyse" class="btn btn-sm {% if category == 'analyse' %}btn-primary{% else %}btn-outline-primary{% endif %}">Analyses</a>
-    <a href="?type=publication" class="btn btn-sm {% if category == 'publication' %}btn-primary{% else %}btn-outline-primary{% endif %}">Publications</a>
-    <a href="." class="btn btn-sm btn-outline-secondary">Tous</a>
-  </div>
-
-  <!-- Liste des articles -->
-  <div class="row">
-    {% for article in articles %}
-      <div class="col-md-4 mb-4">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title">{{ article.title }}</h5>
-            {% if article.cover_image %}
-  <img src="{{ article.cover_image.url }}" class="card-img-top" alt="Image de couverture">
-{% endif %}
-
-            <p class="card-text">{{ article.content|truncatewords:30|safe }}</p>
-            <a href="{% url 'public_article_detail' article.slug %}" class="btn btn-sm btn-outline-dark">Lire plus</a>
-          </div>
-          <div class="card-footer text-muted small">
-            Publié le {{ article.created_at|date:"d M Y" }} par {{ article.author }}
-          </div>
+<div class="member-profile">
+    <div class="member-header">
+        <img src="{{ member.profile_picture.url|default:'/static/profiles/default.png' }}" 
+             class="member-avatar" 
+             alt="{{ member.first_name }} {{ member.last_name }}">
+        
+        <div class="member-info">
+            <h2 class="member-name">{{ member.first_name }} {{ member.last_name }}</h2>
+            
+            {% if member.job_title or member.department %}
+            <p class="member-job">
+                {% if member.job_title %}{{ member.job_title }}{% endif %}
+                {% if member.job_title and member.department %} - {% endif %}
+                {% if member.department %}{{ member.department }}{% endif %}
+            </p>
+            {% endif %}
+            
+            <div class="member-social">
+                {% if member.social_linkedin %}
+                <a href="{{ member.social_linkedin }}" target="_blank" class="social-icon">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                {% endif %}
+                
+                {% if member.social_twitter %}
+                <a href="{{ member.social_twitter }}" target="_blank" class="social-icon">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                {% endif %}
+                
+                {% if member.social_facebook %}
+                <a href="{{ member.social_facebook }}" target="_blank" class="social-icon">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                {% endif %}
+            </div>
+            
+            {% if member.date_started %}
+            <div class="member-meta">
+                <i class="far fa-calendar-alt"></i> Membre depuis {{ member.date_started|date:"F Y" }}
+            </div>
+            {% endif %}
         </div>
-      </div>
-    {% empty %}
-      <p>Aucun article pour cette catégorie.</p>
-    {% endfor %}
-  </div>
+    </div>
+    
+    <div class="member-bio">
+        <h3>Présentation</h3>
+        {% if member.bio %}
+            {{ member.bio|linebreaks }}
+        {% else %}
+            <p class="text-muted">Ce membre n'a pas encore rédigé de biographie.</p>
+        {% endif %}
+    </div>
+    
+    <a href="{% url 'public_member_list' %}" class="btn btn-outline-primary mt-4">
+        <i class="fas fa-arrow-left me-2"></i> Retour à la liste des membres
+    </a>
 </div>
-
 {% endblock %}

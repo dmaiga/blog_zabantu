@@ -1,0 +1,116 @@
+{% extends 'base_public.html' %}
+
+{% block title %}{{ member.full_name }} - Zabantu{% endblock %}
+
+{% block banner_title %}{{ member.full_name }}{% endblock %}
+{% block banner_subtitle %}{{ member.job }}{% endblock %}
+
+{% block content %}
+<style>
+    .member-profile {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    .profile-img {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        object-position: top;
+        border-radius: 10px 10px 0 0;
+    }
+    .social-link {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        background-color: var(--zabantu-primary);
+        color: white;
+        border-radius: 50%;
+        margin-right: 10px;
+        transition: all 0.3s;
+    }
+    .social-link:hover {
+        background-color: var(--zabantu-secondary);
+        transform: translateY(-3px);
+    }
+    .meta-label {
+        font-weight: 600;
+        color: var(--zabantu-primary);
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <!-- Photo et informations principales -->
+        <div class="col-lg-4 mb-4">
+            <div class="member-profile">
+                <img src="{{ member.profile_picture }}" 
+                     class="profile-img" 
+                     alt="{{ member.full_name }}">
+                
+                <div class="p-4">
+                    <h4 class="mb-3">{{ member.full_name }}</h4>
+                    
+                    {% if member.job %}
+                    <p class="text-muted mb-4">{{ member.job }}</p>
+                    {% endif %}
+                    
+                    <!-- Liens sociaux -->
+                    <div class="mb-4">
+                        {% if member.social_links.linkedin %}
+                        <a href="{{ member.social_links.linkedin }}" target="_blank" class="social-link">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        {% endif %}
+                        {% if member.social_links.twitter %}
+                        <a href="{{ member.social_links.twitter }}" target="_blank" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        {% endif %}
+                        {% if member.social_links.facebook %}
+                        <a href="{{ member.social_links.facebook }}" target="_blank" class="social-link">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Métadonnées -->
+                    <div class="member-meta">
+                        {% if member.join_date %}
+                        <p class="mb-2">
+                            <span class="meta-label">Membre depuis:</span>
+                            {{ member.join_date|date:"F Y" }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bio et détails -->
+        <div class="col-lg-8">
+            <div class="member-profile p-4 h-100">
+                <h4 class="mb-4">Présentation</h4>
+                
+                {% if member.bio %}
+                <div class="member-bio">
+                    {{ member.bio|linebreaks }}
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    Ce membre n'a pas encore rédigé de biographie.
+                </div>
+                {% endif %}
+                
+                <div class="mt-4">
+                    <a href="{% url 'public_member_list' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i> Retour à la liste des membres
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

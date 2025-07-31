@@ -1,0 +1,141 @@
+{% extends 'base_public.html' %}
+
+{% block banner_title %}
+Bienvenue au Cercle Zabantu
+{% endblock %}
+
+{% block banner_subtitle %}
+Espace de réflexion stratégique et géopolitique
+{% endblock %}
+
+{% block content %}
+<style>
+    .featured-seminar {
+        background-color: white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .featured-seminar h2 {
+        color: var(--zabantu-primary);
+        font-weight: 600;
+    }
+    
+    .featured-seminar h3 {
+        color: var(--zabantu-dark);
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    
+    .latest-articles .card {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .latest-articles .card-title {
+        color: var(--zabantu-dark);
+        font-weight: 600;
+        min-height: 3rem;
+    }
+    
+    .upcoming-events .card {
+        border-left: 3px solid var(--zabantu-secondary);
+    }
+    
+    .upcoming-events .card-title {
+        color: var(--zabantu-primary);
+    }
+    
+    .upcoming-events .card-text {
+        color: #555;
+    }
+    
+    .alert-info {
+        background-color: var(--zabantu-light);
+        border-color: var(--zabantu-accent);
+        color: var(--zabantu-dark);
+    }
+</style>
+<!-- Événements à venir -->
+<section class="upcoming-events">
+    <h2 class="section-title mb-4">Événements à venir</h2>
+    {% if upcoming_events %}
+    <div class="row">
+        {% for event in upcoming_events %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if event.image %}
+                <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ event.title }}</h5>
+                    <p class="card-text">
+                        <i class="fas fa-calendar-alt me-2"></i>{{ event.date|date:"d F Y" }}<br>
+                        <i class="fas fa-clock me-2"></i>{{ event.date|time:"H:i" }}<br>
+                        <i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        Aucun événement à venir pour le moment.
+    </div>
+    {% endif %}
+</section>
+<!-- Section Séminaire en vedette -->
+{% if featured_seminar %}
+<section class="featured-seminar mb-5">
+    <div class="row g-0 rounded overflow-hidden">
+        <div class="col-md-6 p-4 d-flex flex-column">
+            <h2>Dernier Séminaire</h2>
+            <h3>{{ featured_seminar.title }}</h3>
+            <div class="mb-3">
+                <span class="badge bg-primary">{{ featured_seminar.get_category_display }}</span>
+                <span class="text-muted ms-2">{{ featured_seminar.created_at|date:"d F Y" }}</span>
+            </div>
+            <p>{{ featured_seminar.content|striptags|truncatewords:30 }}</p>
+            <a href="{% url 'public_article_detail' featured_seminar.slug %}" class="btn btn-primary mt-auto align-self-start">
+                Lire le compte-rendu
+            </a>
+        </div>
+        <div class="col-md-6">
+            {% if featured_seminar.cover_image %}
+            <img src="{{ featured_seminar.cover_image.url }}" class="img-fluid h-100" alt="{{ featured_seminar.title }}" style="object-fit: cover;">
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Dernières publications -->
+<section class="latest-articles mb-5">
+    <h2 class="section-title mb-4">Nos dernières publications</h2>
+    <div class="row">
+        {% for article in latest_articles %}
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100">
+                {% if article.cover_image %}
+                <img src="{{ article.cover_image.url }}" class="card-img-top" alt="{{ article.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <span class="badge bg-secondary mb-2">{{ article.get_category_display }}</span>
+                    <h5 class="card-title">{{ article.title }}</h5>
+                    <p class="card-text">{{ article.content|striptags|truncatewords:15 }}</p>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <a href="{% url 'public_article_detail' article.slug %}" class="btn btn-outline-primary">Lire</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-3">
+        <a href="{% url 'public_article_list' %}" class="btn btn-primary">Voir toutes les publications</a>
+    </div>
+</section>
+
+
+{% endblock %}

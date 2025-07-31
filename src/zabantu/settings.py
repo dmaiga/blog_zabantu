@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'users',
     'articles',
     'site_web',
+    'events',
     'tinymce',
    
     

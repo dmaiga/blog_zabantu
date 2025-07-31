@@ -30,4 +30,16 @@ class ArticleForm(forms.ModelForm):
             'pdf_file', 'status', 'publish_at',
             
         ]
-        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['status'].choices = [
+            ('draft', 'Brouillon'),
+            ('published', 'Publié'),
+        ]
+        self.fields['status'].initial = 'draft'
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data.get('status') == 'published' and not cleaned_data.get('cover_image'):
+            raise forms.ValidationError("Une image de couverture est requise pour la publication")
+        return cleaned_data

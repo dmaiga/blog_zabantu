@@ -1,0 +1,95 @@
+{% extends 'base_public.html' %}
+
+{% block title %}Événements - Zabantu{% endblock %}
+
+{% block banner_title %}Nos Événements{% endblock %}
+{% block banner_subtitle %}Retrouvez tous nos séminaires et rencontres à venir{% endblock %}
+
+{% block content %}
+<style>
+    .event-card {
+        transition: transform 0.3s;
+        border-left: 4px solid var(--zabantu-secondary);
+    }
+    .event-card:hover {
+        transform: translateY(-5px);
+    }
+    .past-event {
+        opacity: 0.8;
+        background-color: #f8f9fa;
+    }
+    .event-date-badge {
+        background-color: var(--zabantu-primary);
+        color: white;
+    }
+</style>
+
+<div class="container">
+    <!-- Événements à venir -->
+    <section class="mb-5">
+        <h2 class="section-title mb-4">Événements à venir</h2>
+        
+        {% if upcoming_events %}
+        <div class="row">
+            {% for event in upcoming_events %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 event-card">
+                    {% if event.image %}
+                    <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge event-date-badge mb-2">
+                            {{ event.date|date:"d M Y" }} à {{ event.date|time:"H:i" }}
+                        </span>
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a href="{% url 'public_event_detail' event.pk %}" class="btn btn-primary btn-sm">
+                            Plus d'informations
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            Aucun événement à venir pour le moment.
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Événements passés -->
+    <section class="mb-5">
+        <h2 class="section-title mb-4">Événements passés</h2>
+        
+        {% if past_events %}
+        <div class="row">
+            {% for event in past_events %}
+            <div class="col-md-6 mb-3">
+                <div class="card past-event">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-calendar-alt me-2"></i>{{ event.date|date:"d M Y" }}
+                            <i class="fas fa-map-marker-alt ms-3 me-2"></i>{{ event.location }}
+                        </p>
+                        <a href="{% url 'public_event_detail' event.pk %}" class="btn btn-outline-primary btn-sm">
+                            Voir le compte-rendu
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-secondary">
+            Aucun événement passé à afficher.
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

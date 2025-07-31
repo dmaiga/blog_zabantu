@@ -1,0 +1,92 @@
+{% extends 'base_public.html' %}
+
+{% block title %}Membres - Zabantu{% endblock %}
+
+{% block banner_title %}Nos Membres{% endblock %}
+{% block banner_subtitle %}Découvrez les membres actifs du Cercle Zabantu{% endblock %}
+
+{% block content %}
+<style>
+    .member-card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    .member-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .member-img {
+        height: 200px;
+        object-fit: cover;
+        object-position: top;
+    }
+    .social-icon {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: var(--zabantu-primary);
+        color: white;
+        margin-right: 8px;
+    }
+    .social-icon:hover {
+        background-color: var(--zabantu-secondary);
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        {% for member in members %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card member-card h-100">
+                <img src="{{ member.profile_picture.url|default:'/static/profiles/default.png' }}" 
+                     class="card-img-top member-img" 
+                     alt="{{ member.first_name }} {{ member.last_name }}">
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ member.first_name }} {{ member.last_name }}</h5>
+                    
+                    {% if member.job_title or member.department %}
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        {{ member.job_title }}
+                        {% if member.job_title and member.department %} - {% endif %}
+                        {{ member.department }}
+                    </h6>
+                    {% endif %}
+                    
+                    {% if member.bio %}
+                    <p class="card-text">{{ member.bio|truncatewords:20 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'public_member_detail' member.pk %}" class="btn btn-outline-primary btn-sm">
+                            Voir le profil
+                        </a>
+                        
+                        <div class="social-links">
+                            {% if member.social_linkedin %}
+                            <a href="{{ member.social_linkedin }}" target="_blank" class="social-icon">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            {% endif %}
+                            {% if member.social_twitter %}
+                            <a href="{{ member.social_twitter }}" target="_blank" class="social-icon">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

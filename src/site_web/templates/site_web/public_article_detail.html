@@ -1,22 +1,91 @@
-{% extends "base.html" %}
+{% extends 'base_public.html' %}
+
+{% block title %}{{ article.title }} | Zabantu{% endblock %}
+
 {% block content %}
+<style>
+    .article-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    .article-header {
+        margin-bottom: 2rem;
+    }
+    
+    .article-title {
+        color: var(--zabantu-primary);
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .article-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .article-image {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+    
+    .article-content {
+        line-height: 1.7;
+        font-size: 1.1rem;
+    }
+    
+    .author-minimal {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+        font-size: 0.9rem;
+    }
+    
+    .author-link {
+        color: var(--zabantu-primary);
+    }
+</style>
 
-<div class="container mt-5">
-  <h2>{{ article.title }}</h2>
-  <p class="text-muted">Publié le {{ article.created_at|date:"d M Y" }} par {{ article.author }}</p>
-
-  <hr>
-{% if article.cover_image %}
-  <img src="{{ article.cover_image.url }}" class="img-fluid rounded mb-3" alt="Image de couverture">
-{% endif %}
-
-  <div>
-    {{ article.content|safe }}
-  </div>
-
-  {% if article.pdf_file %}
-    <a href="{{ article.pdf_file.url }}" target="_blank" class="btn btn-outline-primary mt-3">Télécharger le PDF</a>
-  {% endif %}
+<div class="article-container">
+    <header class="article-header">
+        <h1 class="article-title">{{ article.title }}</h1>
+        
+        <div class="article-meta">
+            <span class="badge bg-primary">{{ article.get_category_display }}</span>
+            <span>{{ article.created_at|date:"d F Y" }}</span>
+        </div>
+        
+        {% if article.cover_image %}
+        <img src="{{ article.cover_image.url }}" 
+             class="article-image" 
+             alt="{{ article.title }}">
+        {% endif %}
+    </header>
+    
+    <div class="article-content">
+        {{ article.content|safe }}
+    </div>
+    
+    {% if author %}
+    <div class="author-minimal">
+        <p>
+            Article par 
+            <a href="{% url 'public_member_detail' article.author.id %}" class="author-link">
+                {{ author.full_name }}
+            </a>
+        </p>
+    </div>
+    {% endif %}
+    
+    <a href="{% url 'home' %}" class="d-block mt-4">
+        &larr; Retour aux publications
+    </a>
 </div>
-
 {% endblock %}

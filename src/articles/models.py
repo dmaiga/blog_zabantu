@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.utils.text import slugify,Truncator
 from tinymce.models import HTMLField
 import uuid
+from django.conf import settings
 
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -35,7 +36,7 @@ class Article(models.Model):
 
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='articles')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='articles')
     content = HTMLField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='published')
     created_at = models.DateTimeField(auto_now_add=True)
