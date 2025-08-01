@@ -5,16 +5,26 @@ from django.views.generic import TemplateView
 from django.utils import timezone
 
 def public_article_list(request):
-    type_filter = request.GET.get('type')
+    type_filter = request.GET.get('type', None)
     articles = Article.objects.filter(status='published')
-
+    
+    # Filtrer par catégorie si spécifié
     if type_filter in ['seminaire', 'analyse', 'publication']:
         articles = articles.filter(category=type_filter)
-
+    
+    # Compter les articles par catégorie pour le menu
+    categories = {
+        'seminaire': articles.filter(category='seminaire').count(),
+        'analyse': articles.filter(category='analyse').count(),
+        'publication': articles.filter(category='publication').count()
+    }
+    
     return render(request, 'site_web/public_article_list.html', {
-        'articles': articles,
-        'type_filter': type_filter
+        'articles': articles.order_by('-created_at'),
+        'current_filter': type_filter,
+        'categories': categories
     })
+
 
 def public_article_detail(request, slug):
     article = get_object_or_404(

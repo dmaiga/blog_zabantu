@@ -1,14 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container mt-4">
-  <h2>Dashboard Administrateur</h2>
+  <h2>Bienvenue {{ user.first_name }}</h2>
 
-  <!-- Section Gestion des Articles -->
+  <!-- Section Articles -->
   <div class="card mt-4">
-    <div class="card-header bg-success text-white">Gestion des articles</div>
+    <div class="card-header bg-primary text-white">Mes Articles</div>
     <div class="card-body">
-      <p>Accédez à tous les articles du site, publiés ou non.</p>
-      <a href="{% url 'article_list' %}" class="btn btn-outline-success">📝 Gérer les articles</a>
+      <p>Gérez vos articles publiés ou en brouillon.</p>
+      <a href="{% url 'article_list' %}" class="btn btn-outline-primary me-2">
+        <i class="fas fa-newspaper me-1"></i> Voir mes articles
+      </a>
+      <a href="{% url 'article_create' %}" class="btn btn-outline-success">
+        <i class="fas fa-plus me-1"></i> Nouvel article
+      </a>
+    </div>
+  </div>
+
+  <!-- Section Événements -->
+  <div class="card mt-4">
+    <div class="card-header bg-info text-white">Mes Événements</div>
+    <div class="card-body">
+      <p>Gérez vos événements publiés ou à venir.</p>
+      <a href="{% url 'event_list' %}" class="btn btn-outline-info me-2">
+        <i class="fas fa-calendar-alt me-1"></i> Voir mes événements
+      </a>
+      <a href="{% url 'event_create' %}" class="btn btn-outline-success">
+        <i class="fas fa-plus me-1"></i> Nouvel événement
+      </a>
     </div>
   </div>
 </div>

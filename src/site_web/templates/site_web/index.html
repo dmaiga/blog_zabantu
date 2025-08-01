@@ -12,38 +12,85 @@ Espace de réflexion stratégique et géopolitique
 <style>
     .featured-seminar {
         background-color: white;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
         overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+    }
+    
+    .featured-seminar:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
     }
     
     .featured-seminar h2 {
         color: var(--zabantu-primary);
         font-weight: 600;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
     }
     
     .featured-seminar h3 {
         color: var(--zabantu-dark);
         font-weight: 700;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+        line-height: 1.2;
     }
     
     .latest-articles .card {
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .latest-articles .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .latest-articles .card-img-top {
+        height: 180px;
+        object-fit: cover;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
     }
     
     .latest-articles .card-title {
         color: var(--zabantu-dark);
         font-weight: 600;
         min-height: 3rem;
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
     }
     
     .upcoming-events .card {
-        border-left: 3px solid var(--zabantu-secondary);
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        height: 100%;
+        border-left: 4px solid var(--zabantu-secondary);
+    }
+    
+    .upcoming-events .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .upcoming-events .card-img-top {
+        height: 180px;
+        object-fit: cover;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
     }
     
     .upcoming-events .card-title {
         color: var(--zabantu-primary);
+        font-weight: 600;
     }
     
     .upcoming-events .card-text {
@@ -54,88 +101,258 @@ Espace de réflexion stratégique et géopolitique
         background-color: var(--zabantu-light);
         border-color: var(--zabantu-accent);
         color: var(--zabantu-dark);
+        border-radius: 8px;
+    }
+    
+    .section-title {
+        color: var(--zabantu-dark);
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+    
+    .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 80px;
+        height: 4px;
+        background: var(--zabantu-secondary);
+        border-radius: 2px;
+    }
+    
+    .btn-primary {
+        background-color: var(--zabantu-secondary);
+        border-color: var(--zabantu-secondary);
+        padding: 0.5rem 1.5rem;
+        border-radius: 30px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--zabantu-primary);
+        border-color: var(--zabantu-primary);
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline-primary {
+        color: var(--zabantu-secondary);
+        border-color: var(--zabantu-secondary);
+        border-radius: 30px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: var(--zabantu-secondary);
+        border-color: var(--zabantu-secondary);
+        color: white;
+    }
+    
+    .badge {
+        font-weight: 500;
+        padding: 0.35em 0.65em;
+        border-radius: 4px;
+    }
+    
+    .bg-primary {
+        background-color: var(--zabantu-primary) !important;
+    }
+    
+    .bg-secondary {
+        background-color: var(--zabantu-accent) !important;
+        color: var(--zabantu-dark);
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .card-footer {
+        padding: 1rem 1.5rem;
+        background-color: rgba(0,0,0,0.01);
+    }
+    
+    .text-muted {
+        color: #6c757d !important;
+    }
+    
+    .featured-content {
+        padding: 2.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .featured-seminar h3 {
+            font-size: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+        }
+        
+        .featured-content {
+            padding: 1.5rem;
+        }
     }
 </style>
+
+<!-- Hero Section -->
+<section class="hero-section mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Réflexions stratégiques pour l'Afrique contemporaine</h1>
+                <p class="lead mb-4">Le Cercle Zabantu rassemble des experts pour analyser les enjeux géopolitiques et proposer des solutions innovantes.</p>
+                <a href="#publications" class="btn btn-primary btn-lg me-2">Nos publications</a>
+                <a href="#events" class="btn btn-outline-primary btn-lg">Événements</a>
+            </div>
+            <div class="col-lg-6">
+                <img src="/static/site_web/images/hero-team.jpg" alt="Réunion d'experts" class="img-fluid rounded-3 shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Événements à venir -->
-<section class="upcoming-events">
-    <h2 class="section-title mb-4">Événements à venir</h2>
-    {% if upcoming_events %}
-    <div class="row">
-        {% for event in upcoming_events %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                {% if event.image %}
-                <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">{{ event.title }}</h5>
-                    <p class="card-text">
-                        <i class="fas fa-calendar-alt me-2"></i>{{ event.date|date:"d F Y" }}<br>
-                        <i class="fas fa-clock me-2"></i>{{ event.date|time:"H:i" }}<br>
-                        <i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}
-                    </p>
+<section id="events" class="upcoming-events mb-5 py-5 bg-light">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Événements à venir</h2>
+        {% if upcoming_events %}
+        <div class="row g-4">
+            {% for event in upcoming_events %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    {% if event.image %}
+                    <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-primary">{{ event.event_type }}</span>
+                            <small class="text-muted">{{ event.date|date:"d F Y" }}</small>
+                        </div>
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <p class="card-text">{{ event.description|striptags|truncatewords:20 }}</p>
+                        <div class="event-meta mt-3">
+                            <p class="mb-1"><i class="fas fa-clock me-2"></i>{{ event.date|time:"H:i" }}</p>
+                            <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}</p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a href="#" class="btn btn-primary">Plus d'informations</a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        {% else %}
+        <div class="alert alert-info text-center">
+            <i class="fas fa-calendar-check fa-2x mb-3"></i>
+            <h4>Aucun événement à venir pour le moment</h4>
+            <p class="mb-0">Revenez régulièrement pour découvrir nos prochains événements</p>
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <div class="alert alert-info">
-        Aucun événement à venir pour le moment.
-    </div>
-    {% endif %}
 </section>
+
 <!-- Section Séminaire en vedette -->
 {% if featured_seminar %}
-<section class="featured-seminar mb-5">
-    <div class="row g-0 rounded overflow-hidden">
-        <div class="col-md-6 p-4 d-flex flex-column">
-            <h2>Dernier Séminaire</h2>
-            <h3>{{ featured_seminar.title }}</h3>
-            <div class="mb-3">
-                <span class="badge bg-primary">{{ featured_seminar.get_category_display }}</span>
-                <span class="text-muted ms-2">{{ featured_seminar.created_at|date:"d F Y" }}</span>
+<section class="featured-seminar mb-5 py-5">
+    <div class="container">
+        <div class="row g-0 rounded overflow-hidden shadow">
+            <div class="col-lg-6 featured-content">
+                <span class="badge bg-primary mb-3">{{ featured_seminar.get_category_display }}</span>
+                <h2>Dernier Séminaire</h2>
+                <h3>{{ featured_seminar.title }}</h3>
+                <div class="d-flex align-items-center mb-4">
+                    <div class="me-3">
+                        <i class="fas fa-calendar-alt text-muted me-2"></i>
+                        <span class="text-muted">{{ featured_seminar.created_at|date:"d F Y" }}</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-user-edit text-muted me-2"></i>
+                        <span class="text-muted">{{ featured_seminar.author.get_full_name }}</span>
+                    </div>
+                </div>
+                <p class="mb-4">{{ featured_seminar.content|striptags|truncatewords:30 }}</p>
+                <div class="d-flex">
+                    <a href="{% url 'public_article_detail' featured_seminar.slug %}" class="btn btn-primary me-3">
+                        Lire le compte-rendu
+                    </a>
+                    <a href="#" class="btn btn-outline-primary">
+                        <i class="fas fa-download me-2"></i>PDF
+                    </a>
+                </div>
             </div>
-            <p>{{ featured_seminar.content|striptags|truncatewords:30 }}</p>
-            <a href="{% url 'public_article_detail' featured_seminar.slug %}" class="btn btn-primary mt-auto align-self-start">
-                Lire le compte-rendu
-            </a>
-        </div>
-        <div class="col-md-6">
-            {% if featured_seminar.cover_image %}
-            <img src="{{ featured_seminar.cover_image.url }}" class="img-fluid h-100" alt="{{ featured_seminar.title }}" style="object-fit: cover;">
-            {% endif %}
+            <div class="col-lg-6">
+                {% if featured_seminar.cover_image %}
+                <img src="{{ featured_seminar.cover_image.url }}" class="img-fluid h-100 w-100" alt="{{ featured_seminar.title }}" style="object-fit: cover;">
+                {% else %}
+                <div class="bg-light h-100 d-flex align-items-center justify-content-center">
+                    <i class="fas fa-image fa-5x text-muted"></i>
+                </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </section>
 {% endif %}
 
 <!-- Dernières publications -->
-<section class="latest-articles mb-5">
-    <h2 class="section-title mb-4">Nos dernières publications</h2>
-    <div class="row">
-        {% for article in latest_articles %}
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card h-100">
-                {% if article.cover_image %}
-                <img src="{{ article.cover_image.url }}" class="card-img-top" alt="{{ article.title }}">
-                {% endif %}
-                <div class="card-body">
-                    <span class="badge bg-secondary mb-2">{{ article.get_category_display }}</span>
-                    <h5 class="card-title">{{ article.title }}</h5>
-                    <p class="card-text">{{ article.content|striptags|truncatewords:15 }}</p>
-                </div>
-                <div class="card-footer bg-white border-0">
-                    <a href="{% url 'public_article_detail' article.slug %}" class="btn btn-outline-primary">Lire</a>
+<section id="publications" class="latest-articles mb-5 py-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Nos dernières publications</h2>
+        <div class="row g-4">
+            {% for article in latest_articles %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100">
+                    {% if article.cover_image %}
+                    <img src="{{ article.cover_image.url }}" class="card-img-top" alt="{{ article.title }}">
+                    {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+                        <i class="fas fa-file-alt fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-secondary mb-2">{{ article.get_category_display }}</span>
+                        <h5 class="card-title">{{ article.title }}</h5>
+                        <p class="card-text">{{ article.content|striptags|truncatewords:15 }}</p>
+                    </div>
+                    <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center">
+                        <small class="text-muted">{{ article.created_at|date:"d M Y" }}</small>
+                        <a href="{% url 'public_article_detail' article.slug %}" class="btn btn-outline-primary btn-sm">Lire</a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-    <div class="text-center mt-3">
-        <a href="{% url 'public_article_list' %}" class="btn btn-primary">Voir toutes les publications</a>
+        <div class="text-center mt-5">
+            <a href="{% url 'public_article_list' %}" class="btn btn-primary px-5 py-3">Voir toutes les publications</a>
+        </div>
     </div>
 </section>
 
+<!-- Newsletter Section -->
+<section class="newsletter-section py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="section-title mb-4">Restez informés</h2>
+                <p class="lead mb-4">Abonnez-vous à notre newsletter pour recevoir nos dernières analyses et invitations aux événements.</p>
+                <form class="row g-3 justify-content-center">
+                    <div class="col-md-8">
+                        <input type="email" class="form-control form-control-lg" placeholder="Votre email">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">S'abonner</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
 
 {% endblock %}

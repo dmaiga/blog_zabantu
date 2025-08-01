@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Événements - Zabantu{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{% if view_type == 'my_events' %}Mes Événements{% else %}Tous les Événements{% endif %}</h2>
+        {% if user.is_authenticated %}
+        <a href="{% url 'event_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Créer un événement
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        {% for event in events %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                {% if event.image %}
+                <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ event.title }}</h5>
+                    <p class="card-text">
+                        <i class="fas fa-calendar-alt me-2"></i>{{ event.date|date:"d F Y H:i" }}<br>
+                        <i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}
+                    </p>
+                    <span class="badge bg-{% if event.is_published %}success{% else %}warning{% endif %}">
+                        {% if event.is_published %}Publié{% else %}Brouillon{% endif %}
+                    </span>
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="{% url 'event_detail' event.id %}" class="btn btn-sm btn-outline-primary">
+                        Détails
+                    </a>
+                   
+                    <a href="{% url 'event_update' event.id %}" class="btn btn-sm btn-outline-secondary ms-2">
+                        Modifier
+                    </a>
+                    </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Aucun événement disponible pour le moment.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

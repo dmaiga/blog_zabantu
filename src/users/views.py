@@ -32,4 +32,4 @@ def admin_dashboard(request):
 
 @login_required
 def member_dashboard(request):
-    return render(request, 'users/membre_dashboard.html')
+    return render(request, 'users/admin_dashboard.html')

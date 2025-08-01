@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+<style>
+    .article-cover-img {
+        max-height: 400px;
+        object-fit: cover;
+        width: 100%;
+    }
+</style>
+
 {% block content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -14,12 +22,19 @@
             {% endif %}
         </span>
     </div>
-
+<style>
+    .article-cover-img {
+        max-height: 400px;
+        object-fit: cover;
+        width: 100%;
+    }
+</style>
     <div class="row">
         <div class="col-md-8">
             <div class="card mb-4">
                 {% if article.cover_image %}
-                <img src="{{ article.cover_image.url }}" class="card-img-top" alt="{{ article.title }}">
+               <img src="{{ article.cover_image.url }}" class="card-img-top article-cover-img" alt="{{ article.title }}">
+
                 {% endif %}
                 <div class="card-body">
                     <div class="article-content">

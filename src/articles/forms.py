@@ -8,7 +8,7 @@ class ArticleForm(forms.ModelForm):
         widget=TinyMCE(
             attrs={
                 'cols': 80, 
-                'rows': 30,
+                'rows': 15,
                 'plugins': 'preview autolink visualblocks image media table help',
                 'toolbar': 'undo redo | styles | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | preview media | help',
             }

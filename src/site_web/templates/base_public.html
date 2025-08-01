@@ -1,292 +1,275 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Zabantu - Analyses et Séminaires{% endblock %}</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --zabantu-primary: #6F826A;
-            --zabantu-secondary: #BF9264;
-            --zabantu-accent: #BBD8A3;
-            --zabantu-light: #F0F1C5;
-            --zabantu-dark: #2C3E2C;
-        }
-        
-        body {
-            font-family: 'Georgia', serif;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        
-        .zabantu-header {
-            background-color: var(--zabantu-dark);
-            border-bottom: 3px solid var(--zabantu-secondary);
-        }
-        
-        .navbar-brand img {
-            transition: transform 0.3s;
-        }
-        
-        .navbar-brand:hover img {
-            transform: scale(1.05);
-        }
-        
-        .nav-link {
-            color: white !important;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            margin: 0 0.2rem;
-            transition: all 0.3s;
-        }
-        
-        .nav-link:hover {
-            color: var(--zabantu-light) !important;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-        
-        .dropdown-menu {
-            background-color: var(--zabantu-primary);
-            border: none;
-        }
-        
-        .dropdown-item {
-            color: white !important;
-        }
-        
-        .dropdown-item:hover {
-            background-color: var(--zabantu-secondary);
-            color: white !important;
-        }
-        
-        .zabantu-banner {
-            background: linear-gradient(135deg, var(--zabantu-primary), var(--zabantu-dark));
-            padding: 3rem 0;
-            margin-bottom: 2rem;
-        }
-        
-        .zabantu-banner h1 {
-            font-weight: 700;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-        }
-        
-        .zabantu-banner .lead {
-            font-weight: 300;
-            opacity: 0.9;
-        }
-        
-        .featured-seminar {
-            border-left: 5px solid var(--zabantu-secondary);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .featured-seminar:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .section-title {
-            color: var(--zabantu-primary);
-            position: relative;
-            padding-bottom: 10px;
-        }
-        
-        .section-title:after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 60px;
-            height: 3px;
-            background-color: var(--zabantu-secondary);
-        }
-        
-        .card {
-            border: none;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .card-img-top {
-            height: 180px;
-            object-fit: cover;
-        }
-        
-        .btn-primary {
-            background-color: var(--zabantu-primary);
-            border-color: var(--zabantu-primary);
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--zabantu-dark);
-            border-color: var(--zabantu-dark);
-        }
-        
-        .btn-outline-primary {
-            color: var(--zabantu-primary);
-            border-color: var(--zabantu-primary);
-        }
-        
-        .btn-outline-primary:hover {
-            background-color: var(--zabantu-primary);
-            color: white;
-        }
-        
-        .badge.bg-primary {
-            background-color: var(--zabantu-secondary) !important;
-        }
-        
-        .badge.bg-secondary {
-            background-color: var(--zabantu-primary) !important;
-        }
-        
-        .zabantu-footer {
-            background-color: var(--zabantu-dark);
-            margin-top: 3rem;
-        }
-        
-        .zabantu-footer a {
-            color: var(--zabantu-accent);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .zabantu-footer a:hover {
-            color: var(--zabantu-secondary);
-        }
-        
-        .zabantu-footer h5 {
-            color: var(--zabantu-secondary);
-            margin-bottom: 1.5rem;
-        }
-        
-        @media (max-width: 768px) {
-            .featured-seminar .col-md-6 {
-                width: 100%;
-            }
-        }
-    </style>
-    
-    {% block extra_css %}{% endblock %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Zabantu - Analyses et Séminaires{% endblock %}</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --zabantu-primary: #6f826a;
+      --zabantu-secondary: #bf9264;
+      --zabantu-accent: #bbd8a3;
+      --zabantu-light: #f0f1c5;
+      --zabantu-dark: #2c3e2c;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    .zabantu-header {
+      background-color: var(--zabantu-dark);
+      border-bottom: 3px solid var(--zabantu-secondary);
+    }
+
+    .navbar {
+      padding: 1rem 0;
+      font-size: 1.05rem;
+    }
+
+    .navbar-brand img {
+      height: 70px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .navbar-brand:hover img {
+      transform: scale(1.05);
+    }
+
+    .navbar-toggler {
+      border: none;
+    }
+
+    .navbar-toggler:focus {
+      box-shadow: none;
+    }
+
+    .nav-link {
+      color: white !important;
+      font-weight: 500;
+      padding: 0.6rem 1rem;
+      transition: 0.3s;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .nav-link:hover,
+    .nav-link:focus {
+      color: var(--zabantu-light) !important;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .dropdown-menu {
+      background-color: var(--zabantu-primary);
+      border: none;
+      border-radius: 0.5rem;
+    }
+
+    .dropdown-item {
+      color: white !important;
+      text-align: center;
+    }
+
+    .dropdown-item:hover {
+      background-color: var(--zabantu-secondary);
+    }
+
+    .backoffice-btn {
+      font-weight: 500;
+      padding: 0.4rem 0.9rem;
+      border-radius: 6px;
+      background-color: var(--zabantu-secondary);
+      border: none;
+      transition: background-color 0.3s ease;
+      color: white;
+      display: block;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .backoffice-btn:hover {
+      background-color: var(--zabantu-light);
+      color: var(--zabantu-dark);
+    }
+
+    .search-form input {
+      border-radius: 20px;
+      padding: 0.4rem 1rem;
+      border: none;
+    }
+
+    .search-form button {
+      border-radius: 20px;
+      padding: 0.4rem 1rem;
+      background-color: var(--zabantu-secondary);
+      border: none;
+      color: white;
+    }
+
+    .zabantu-banner {
+      background: linear-gradient(135deg, var(--zabantu-primary), var(--zabantu-dark));
+      padding: 3rem 0;
+      margin-bottom: 2rem;
+      color: white;
+      text-align: center;
+    }
+
+    .zabantu-footer {
+      background-color: var(--zabantu-dark);
+      margin-top: 3rem;
+      text-align: center;
+    }
+
+    .zabantu-footer a {
+      color: var(--zabantu-accent);
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .zabantu-footer a:hover {
+      color: var(--zabantu-secondary);
+    }
+
+    .zabantu-footer h5 {
+      color: var(--zabantu-secondary);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .footer-navigation {
+      display: flex;
+      justify-content: center;
+    }
+
+    .footer-navigation ul {
+      display: inline-block;
+      text-align: left;
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- En-tête -->
-    <header class="zabantu-header">
-        <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-dark">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="{% url 'home' %}">
-                        <img src="/static/images/logo-zabantu.png" alt="Zabantu" height="40">
-                    </a>
-                    
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    
-                    <div class="collapse navbar-collapse" id="mainNav">
-                        <ul class="navbar-nav me-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'home' %}">Accueil</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    Publications
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=seminaire">Séminaires Guelekan</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=analyse">Analyses</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=publication">Publications</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'public_event_list' %}">Événements</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'public_member_list' %}">Membres</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Galerie</a>
-                            </li>
-                        </ul>
-                        
-                        <!-- Lien admin uniquement pour les connectés -->
-                        {% if user.is_authenticated %}
-                        <div class="d-flex">
-                            <a href="#" class="btn btn-outline-light me-2">
-                                <i class="fas fa-lock"></i> Backoffice
-                            </a>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </nav>
-        </div>
-    </header>
+  <!-- Header/Navbar -->
+  <header class="zabantu-header">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand d-flex justify-content-center" href="{% url 'home' %}">
+            <img src="/static/site_web/images/logo.png" alt="Zabantu" />
+          </a>
 
-    <!-- Bannière (optionnelle) -->
-    <section class="zabantu-banner bg-dark text-white py-4">
-        <div class="container text-center">
-            <h1>{% block banner_title %}Le Cercle Zabantu{% endblock %}</h1>
-            <p class="lead">{% block banner_subtitle %}Réflexions stratégiques et analyses géopolitiques{% endblock %}</p>
-        </div>
-    </section>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+          </button>
 
-    <!-- Contenu principal -->
-    <main class="container my-5">
-        {% block content %}{% endblock %}
-    </main>
+          <div class="collapse navbar-collapse justify-content-center" id="mainNav">
+            <ul class="navbar-nav mb-2 mb-lg-0 text-center">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'home' %}">Accueil</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  Publications
+                </a>
+                <ul class="dropdown-menu text-center">
+                  <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=seminaire">Séminaires Guelekan</a></li>
+                  <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=analyse">Analyses</a></li>
+                  <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=publication">Publications</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'public_event_list' %}">Événements</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'public_member_list' %}">Membres</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">A propos</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Galerie</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Contact</a>
+              </li>
+            </ul>
 
-    <!-- Pied de page -->
-    <footer class="zabantu-footer bg-dark text-white py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>Zabantu</h5>
-                    <p>Le cercle de réflexion stratégique dédié aux enjeux africains contemporains.</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Navigation</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'home' %}" class="text-white">Accueil</a></li>
-                        <li><a href="{% url 'public_article_list' %}" class="text-white">Publications</a></li>
-                        <li><a href="{% url 'public_event_list' %}" class="text-white">Événements</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>Contact</h5>
-                    <address>
-                        <strong>Cercle Zabantu</strong><br>
-                        contact@zabantu.org
-                    </address>
-                </div>
+            <div class="d-flex align-items-center ms-auto justify-content-center">
+              <form class="d-flex search-form me-3" action="{% url 'public_article_list' %}" method="get">
+                <input class="form-control me-2" type="search" name="q" placeholder="Rechercher…" aria-label="Rechercher" />
+                <button class="btn" type="submit"><i class="fas fa-search"></i></button>
+              </form>
+
+             
             </div>
-            <hr class="my-4 bg-light">
-            <div class="text-center">
-                <p class="mb-0">&copy; {% now "Y" %} Cercle Zabantu. Tous droits réservés.</p>
-            </div>
+          </div>
         </div>
-    </footer>
+      </nav>
+    </div>
+  </header>
 
-    <!-- JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    {% block extra_js %}{% endblock %}
+  <!-- Banner -->
+  <section class="zabantu-banner text-white">
+    <div class="container">
+      <h1>{% block banner_title %}Le Cercle Zabantu{% endblock %}</h1>
+      <p class="lead">{% block banner_subtitle %}Réflexions stratégiques et analyses géopolitiques{% endblock %}</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container my-5">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="zabantu-footer text-white py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Zabantu</h5>
+          <p>Le cercle de réflexion stratégique dédié aux enjeux africains contemporains.</p>
+        </div>
+        <div class="col-md-4">
+          <h5>Navigation</h5>
+          <div class="footer-navigation">
+            <ul class="list-unstyled">
+              <li><a href="{% url 'home' %}">Accueil</a></li>
+              <li><a href="{% url 'public_article_list' %}">Publications</a></li>
+              <li><a href="{% url 'public_event_list' %}">Événements</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h5>Contact</h5>
+          <address>
+            <strong>Cercle Zabantu</strong><br />
+            contact@zabantu.org
+          </address>
+        </div>
+      </div>
+      <hr class="my-4 bg-light" />
+      <div class="text-center">
+        <p class="mb-0">&copy; {% now "Y" %} Cercle Zabantu. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

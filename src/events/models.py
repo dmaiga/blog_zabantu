@@ -17,7 +17,10 @@ class Event(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    
+    def can_edit(self, user):
+        """Vérifie si l'utilisateur peut modifier cet événement"""
+        return user.is_authenticated and (user == self.author or user.role in ['admin', 'moderateur'])
     def __str__(self):
         return self.title
     def __str__(self):
