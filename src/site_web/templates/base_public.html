@@ -120,8 +120,8 @@
 
     .zabantu-banner {
       background: linear-gradient(135deg, var(--zabantu-primary), var(--zabantu-dark));
-      padding: 3rem 0;
-      margin-bottom: 2rem;
+      padding: 1rem 0;
+      margin-bottom: 1rem;
       color: white;
       text-align: center;
     }
@@ -186,26 +186,36 @@
                   Publications
                 </a>
                 <ul class="dropdown-menu text-center">
-                  <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=seminaire">Séminaires Guelekan</a></li>
+                  <li><a class="dropdown-item" href="#">Articles</a></li>
+                  <li><a class="dropdown-item" href="#">Ouvrages</a></li>
+                  <li><a class="dropdown-item" href="#">Policy Briefs</a></li>
                   <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=analyse">Analyses</a></li>
-                  <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=publication">Publications</a></li>
+                  <li><a class="dropdown-item" href="#">Rapports</a></li>
+                 
+               
                 </ul>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'public_event_list' %}">Événements</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'public_member_list' %}">Membres</a>
+                <a class="nav-link" href="{% url 'public_guelekan_list' %}">Séminaires Gɛlɛkan</a>
               </li>
+
               <li class="nav-item">
                 <a class="nav-link" href="#">A propos</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Galerie</a>
               </li>
+              
+              <li class="nav-item">
+                <a class="nav-link" href="#">Opportunités</a>
+              </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Contact</a>
               </li>
+              
             </ul>
 
             <div class="d-flex align-items-center ms-auto justify-content-center">
@@ -225,8 +235,8 @@
   <!-- Banner -->
   <section class="zabantu-banner text-white">
     <div class="container">
-      <h1>{% block banner_title %}Le Cercle Zabantu{% endblock %}</h1>
-      <p class="lead">{% block banner_subtitle %}Réflexions stratégiques et analyses géopolitiques{% endblock %}</p>
+      <h1>{% block banner_title %} Bienvenue au groupe de recherche Zabantu {% endblock %}</h1>
+      <p class="lead">{% block banner_subtitle %}Economy | Conflict | State {% endblock %}</p>
     </div>
   </section>
 
@@ -241,7 +251,7 @@
       <div class="row">
         <div class="col-md-4">
           <h5>Zabantu</h5>
-          <p>Le cercle de réflexion stratégique dédié aux enjeux africains contemporains.</p>
+          <p>Vers une recherche ancrée dans les dynamiques économiques et sociales.</p>
         </div>
         <div class="col-md-4">
           <h5>Navigation</h5>
@@ -256,14 +266,18 @@
         <div class="col-md-4">
           <h5>Contact</h5>
           <address>
-            <strong>Cercle Zabantu</strong><br />
-            contact@zabantu.org
+            <strong>Campus universitaire de Badalabougou</strong><br />
+            <span>Email:</span>Info@zabantu.net<br/>
+            <span>Tel:</span>77941470 <br>
+            <span>LinkedIn:</span> <a href="https://www.linkedin.com/company/zabantu-ecs/about/">  Lien LinkedIn</a> <br>
+           <i class="bi bi-facebook"></i> <a href="https://www.facebook.com/zabantu.ecs">Lien Facebook</a>
+           
           </address>
         </div>
       </div>
       <hr class="my-4 bg-light" />
       <div class="text-center">
-        <p class="mb-0">&copy; {% now "Y" %} Cercle Zabantu. Tous droits réservés.</p>
+        <p class="mb-0">&copy; {% now "Y" %} Groupe de recherche Zabantu. Tous droits réservés.</p>
       </div>
     </div>
   </footer>

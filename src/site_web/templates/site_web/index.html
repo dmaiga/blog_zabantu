@@ -1,11 +1,11 @@
 {% extends 'base_public.html' %}
 
 {% block banner_title %}
-Bienvenue au Cercle Zabantu
+Bienvenue au Groupe de recherche Zabantu
 {% endblock %}
 
 {% block banner_subtitle %}
-Espace de réflexion stratégique et géopolitique
+Economy | Conflict | State
 {% endblock %}
 
 {% block content %}
@@ -205,13 +205,17 @@ Espace de réflexion stratégique et géopolitique
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">Réflexions stratégiques pour l'Afrique contemporaine</h1>
-                <p class="lead mb-4">Le Cercle Zabantu rassemble des experts pour analyser les enjeux géopolitiques et proposer des solutions innovantes.</p>
-                <a href="#publications" class="btn btn-primary btn-lg me-2">Nos publications</a>
-                <a href="#events" class="btn btn-outline-primary btn-lg">Événements</a>
+                <h1 class="display-8 fw-bold mb-1">Vers une recherche ancrée dans les dynamiques économiques et sociales</h1>
+                <p class="lead mb-4">
+                    Zabantu, inspiré d'une plante mandingue, est un groupe de recherche pluridisciplinaire travaillant sur le nexus
+                    Economie-Conflit-Etat. Nos travaux sont principalement axés sur la compréhension des dynamiques économiques, de 
+                    conflit armé, des politiques publiques; dans le paradigme d'une recherche ancrée sur les réalités locales.    
+                </p>
+                <a href="#publications" class="btn btn-primary btn-lg me-2">Equipes</a>
+                <a href="#events" class="btn btn-outline-primary btn-lg">Identité</a>
             </div>
             <div class="col-lg-6">
-                <img src="/static/site_web/images/hero-team.jpg" alt="Réunion d'experts" class="img-fluid rounded-3 shadow">
+                <img src="/static/site_web/images/hero-image_2.jpeg" alt="Réunion d'experts" class="img-fluid rounded-3 shadow">
             </div>
         </div>
     </div>
@@ -239,6 +243,7 @@ Espace de réflexion stratégique et géopolitique
                         <div class="event-meta mt-3">
                             <p class="mb-1"><i class="fas fa-clock me-2"></i>{{ event.date|time:"H:i" }}</p>
                             <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}</p>
+                            <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>{{ event.lieu_gps }}</p>
                         </div>
                     </div>
                     <div class="card-footer bg-white border-0">
@@ -279,7 +284,7 @@ Espace de réflexion stratégique et géopolitique
                 </div>
                 <p class="mb-4">{{ featured_seminar.content|striptags|truncatewords:30 }}</p>
                 <div class="d-flex">
-                    <a href="{% url 'public_article_detail' featured_seminar.slug %}" class="btn btn-primary me-3">
+                    <a href="{% url 'public_guelekan_detail' featured_seminar.slug %}" class="btn btn-primary me-3">
                         Lire le compte-rendu
                     </a>
                     <a href="#" class="btn btn-outline-primary">

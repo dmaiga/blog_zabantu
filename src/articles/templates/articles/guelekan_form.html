@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">
+        {% if is_edit %}Modifier{% else %}Créer{% endif %} un Guelekan
+    </h1>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">
+            {% if is_edit %}Mettre à jour{% else %}Créer{% endif %}
+        </button>
+        <a href="{% if is_edit %}{% url 'guelekan_detail' object.slug %}{% else %}{% url 'guelekan_list' %}{% endif %}" 
+           class="btn btn-outline-secondary">
+            Annuler
+        </a>
+    </form>
+</div>
+{% endblock %}

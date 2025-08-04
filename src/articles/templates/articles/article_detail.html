@@ -1,41 +1,27 @@
 {% extends "base.html" %}
 
-<style>
-    .article-cover-img {
-        max-height: 400px;
-        object-fit: cover;
-        width: 100%;
-    }
-</style>
-
 {% block content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>{{ article.title }}</h1>
         <span class="badge 
-            {% if article.is_published %}bg-success
-            {% elif article.is_planned %}bg-info
+            {% if article.status == 'published' %}bg-success
+            {% elif article.publish_at and article.publish_at > timezone.now %}bg-info
             {% else %}bg-warning{% endif %}">
             {{ article.get_status_display }}
-            {% if article.is_planned %}
+            {% if article.publish_at and article.publish_at > timezone.now %}
                 ({{ article.publish_at|date:"d/m/Y H:i" }})
             {% endif %}
         </span>
     </div>
-<style>
-    .article-cover-img {
-        max-height: 400px;
-        object-fit: cover;
-        width: 100%;
-    }
-</style>
+
     <div class="row">
         <div class="col-md-8">
             <div class="card mb-4">
                 {% if article.cover_image %}
-               <img src="{{ article.cover_image.url }}" class="card-img-top article-cover-img" alt="{{ article.title }}">
-
+                <img src="{{ article.cover_image.url }}" class="card-img-top article-cover-img" alt="{{ article.title }}">
                 {% endif %}
+                
                 <div class="card-body">
                     <div class="article-content">
                         {{ article.content|safe }}
@@ -49,6 +35,7 @@
                     </div>
                     {% endif %}
                 </div>
+                
                 <div class="card-footer text-muted">
                     Créé le {{ article.created_at|date:"d/m/Y" }} | 
                     Dernière modification le {{ article.updated_at|date:"d/m/Y" }}
@@ -65,7 +52,7 @@
                             <i class="fas fa-arrow-left"></i> Retour à la liste
                         </a>
                         
-                        {% if not article.is_published %}
+                        {% if article.status != 'published' %}
                         <a href="{% url 'article_update' article.slug %}" class="btn btn-outline-primary">
                             <i class="fas fa-edit"></i> Modifier
                         </a>
@@ -73,11 +60,16 @@
                             <i class="fas fa-paper-plane"></i> Publier
                         </a>
                         {% endif %}
-                        {% if article.is_published %}
-<a href="{% url 'unpublish_article' article.slug %}" class="btn btn-outline-warning">
-    <i class="fas fa-eye-slash"></i> Dépublier
-</a>
-{% endif %}
+                        
+                        {% if article.status == 'published' %}
+                        <a href="{% url 'unpublish_article' article.slug %}" class="btn btn-outline-warning">
+                            <i class="fas fa-eye-slash"></i> Dépublier
+                        </a>
+                        {% endif %}
+                        
+                        <a href="{% url 'article_delete' article.slug %}" class="btn btn-outline-danger">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </a>
                     </div>
                 </div>
             </div>
@@ -85,22 +77,53 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Métadonnées</h5>
-                    <dl>
-                        <dt>Catégorie</dt>
-                        <dd>{{ article.get_category_display }}</dd>
+                    <dl class="row">
+                        <dt class="col-sm-4">Catégorie</dt>
+                        <dd class="col-sm-8">{{ article.get_category_display }}</dd>
                         
-                        <dt>URL</dt>
-                        <dd><code>/article/{{ article.slug }}/</code></dd>
+                        <dt class="col-sm-4">Auteur(s)</dt>
+                        <dd class="col-sm-8">
+                            <ul class="list-unstyled mb-0">
+                                {% for author in article.authors.all %}
+                                <li>
+                                    {% if author.profile_picture %}
+                                    <img src="{{ author.profile_picture.url }}" 
+                                         class="rounded-circle me-2" 
+                                         width="30" 
+                                         height="30" 
+                                         alt="{{ author.get_full_name }}">
+                                    {% endif %}
+                                    <small>{{ author.nom }}</small>
+                                    <small>{{ author.prenom }}</small>
+                                    {% if author.job_title %}
+                                    <small class="text-muted d-block">{{ author.job_title }}</small>
+                                    {% endif %}
+                                </li>
+                                {% if not forloop.last %}<hr class="my-2">{% endif %}
+                                {% endfor %}
+                            </ul>
+                        </dd>
                         
-                        <dt>Titre SEO</dt>
-                        <dd>{{ article.meta_title }}</dd>
+                        <dt class="col-sm-4">URL</dt>
+                        <dd class="col-sm-8"><code>/article/{{ article.slug }}/</code></dd>
                         
-                        <dt>Description SEO</dt>
-                        <dd>{{ article.meta_description }}</dd>
+                        <dt class="col-sm-4">Titre SEO</dt>
+                        <dd class="col-sm-8">{{ article.meta_title }}</dd>
+                        
+                        <dt class="col-sm-4">Description SEO</dt>
+                        <dd class="col-sm-8">{{ article.meta_description }}</dd>
                     </dl>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .article-cover-img {
+        max-height: 400px;
+        object-fit: cover;
+        width: 100%;
+    }
+</style>
 {% endblock %}

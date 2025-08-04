@@ -1,0 +1,54 @@
+{% extends "base_public.html" %}
+
+{% block title %}Guelekan | {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">Guelekan</h1>
+            
+            {% if page_obj %}
+                <div class="list-group mb-4">
+                    {% for guelekan in page_obj %}
+                    <a href="{% url 'public_guelekan_detail' guelekan.slug %}" 
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ guelekan.title }}</h5>
+                            <small>{{ guelekan.publish_at|date:"d/m/Y" }}</small>
+                        </div>
+                        {% if guelekan.subtitle %}
+                        <p class="mb-1">{{ guelekan.subtitle }}</p>
+                        {% endif %}
+                    </a>
+                    {% endfor %}
+                </div>
+                
+            {% if page_obj.has_other_pages %}
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; premier</a>
+            <a href="?page={{ page_obj.previous_page_number }}">précédent</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">suivant</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">dernier &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+            {% else %}
+                <div class="alert alert-info">
+                    Aucun Guelekan disponible pour le moment.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

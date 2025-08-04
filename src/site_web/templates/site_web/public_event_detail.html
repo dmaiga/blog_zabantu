@@ -1,94 +1,135 @@
 {% extends 'base_public.html' %}
 
-{% block title %}{{ event.title }} - Zabantu{% endblock %}
-
-{% block banner_title %}{{ event.title }}{% endblock %}
-{% block banner_subtitle %}
-    {{ event.date|date:"d F Y" }} - {{ event.location }}
-{% endblock %}
+{% block title %}{{ article.title }} | Zabantu{% endblock %}
 
 {% block content %}
 <style>
-    .event-detail {
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    .article-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
     }
-    .event-image {
+    
+    .article-header {
+        margin-bottom: 2rem;
+    }
+    
+    .article-title {
+        color: var(--zabantu-primary);
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .article-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .article-image {
+        width: 100%;
         max-height: 400px;
         object-fit: cover;
-        border-radius: 8px 8px 0 0;
-    }
-    .event-meta {
-        background-color: var(--zabantu-light);
         border-radius: 8px;
-        padding: 1.5rem;
+        margin-bottom: 2rem;
     }
-    .register-btn {
-        background-color: var(--zabantu-secondary);
-        border: none;
+    
+    .article-content {
+        line-height: 1.7;
+        font-size: 1.1rem;
     }
-    .register-btn:hover {
-        background-color: var(--zabantu-primary);
+    
+    .author-section {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+    
+    .author-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .author-card {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.8rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .author-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .author-info {
+        font-size: 0.9rem;
+    }
+    
+    .author-name {
+        font-weight: 600;
+        color: var(--zabantu-primary);
+    }
+    
+    .author-title {
+        color: #666;
+        font-size: 0.8rem;
     }
 </style>
 
-<div class="container">
-    <div class="row">
-        <!-- Image et contenu principal -->
-        <div class="col-lg-8">
-            <div class="event-detail mb-4">
-                {% if event.image %}
-                <img src="{{ event.image.url }}" class="img-fluid w-100 event-image" alt="{{ event.title }}">
-                {% endif %}
-                
-                <div class="p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <span class="badge bg-primary">
-                            {{ event.date|date:"d M Y" }} à {{ event.date|time:"H:i" }}
-                        </span>
-                        {% if not is_past_event %}
-                        <button class="btn register-btn text-white">
-                            <i class="fas fa-calendar-check me-2"></i>S'inscrire
-                        </button>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="event-content">
-                        {{ event.content|linebreaks }}
-                    </div>
-                </div>
-            </div>
+<div class="article-container">
+    <header class="article-header">
+        <h1 class="article-title">{{ article.title }}</h1>
+        
+        <div class="article-meta">
+            <span class="badge bg-primary">{{ article.get_category_display }}</span>
+            <span>{{ article.created_at|date:"d F Y" }}</span>
         </div>
         
-        <!-- Métadonnées -->
-        <div class="col-lg-4">
-            <div class="event-meta">
-                <h4 class="mb-4">Détails</h4>
-                
-                <div class="mb-3">
-                    <h5><i class="fas fa-clock me-2"></i>Date et heure</h5>
-                    <p>{{ event.date|date:"l d F Y" }}<br>
-                    de {{ event.date|time:"H:i" }}</p>
-                </div>
-                
-                <div class="mb-3">
-                    <h5><i class="fas fa-map-marker-alt me-2"></i>Lieu</h5>
-                    <p>{{ event.location }}</p>
-                </div>
-                
-                {% if is_past_event %}
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Cet événement a déjà eu lieu.
-                </div>
+        {% if article.cover_image %}
+        <img src="{{ article.cover_image.url }}" 
+             class="article-image" 
+             alt="{{ article.title }}">
+        {% endif %}
+    </header>
+    
+    <div class="article-content">
+        {{ article.content|safe }}
+    </div>
+    
+    <div class="author-section">
+        <h4>Auteurs</h4>
+        <div class="author-list">
+            {% for author in article.authors.all %}
+            <div class="author-card">
+                {% if author.profile_picture %}
+                <img src="{{ author.profile_picture.url }}" class="author-avatar" alt="{{ author.get_full_name }}">
+                {% else %}
+                <img src="/static/profiles/default.png" class="author-avatar" alt="{{ author.get_full_name }}">
                 {% endif %}
-                
-                <a href="{% url 'public_event_list' %}" class="btn btn-outline-primary mt-3">
-                    <i class="fas fa-arrow-left me-2"></i>Retour aux événements
-                </a>
+                <div class="author-info">
+                    <div class="author-name">{{ author.get_full_name }}</div>
+                    {% if author.job_title or author.department %}
+                    <div class="author-title">
+                        {{ author.job_title }}{% if author.job_title and author.department %}, {% endif %}{{ author.department }}
+                    </div>
+                    {% endif %}
+                </div>
             </div>
+            {% endfor %}
         </div>
     </div>
+    
+    <a href="{% url 'home' %}" class="d-block mt-4">
+        &larr; Retour aux publications
+    </a>
 </div>
 {% endblock %}

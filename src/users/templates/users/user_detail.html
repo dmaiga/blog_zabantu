@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Profil de {{ user_detail.first_name }} {{ user_detail.last_name }}</h2>
+  <div class="row">
+    <div class="col-md-4">
+      <img src="{{ user_detail.profile_picture.url }}" class="img-thumbnail" style="max-width: 100%;">
+    </div>
+    <div class="col-md-8">
+      <ul class="list-group">
+        <li class="list-group-item"><strong>Nom d'utilisateur :</strong> {{ user_detail.username }}</li>
+        <li class="list-group-item"><strong>Email :</strong> {{ user_detail.email }}</li>
+        <li class="list-group-item"><strong>Téléphone :</strong> {{ user_detail.phone_number }}</li>
+        <li class="list-group-item"><strong>Rôle :</strong> {{ user_detail.get_role_display }}</li>
+        <li class="list-group-item"><strong>Fonction :</strong> {{ user_detail.job_title }}</li>
+        <li class="list-group-item"><strong>Département :</strong> {{ user_detail.department }}</li>
+        <li class="list-group-item"><strong>Bio :</strong><br>{{ user_detail.bio }}</li>
+        <li class="list-group-item"><strong>Depuis :</strong> {{ user_detail.date_started }}</li>
+      </ul>
+    </div>
+  </div>
+  <a href="{% url 'user_list' %}" class="btn btn-secondary mt-3">Retour à la liste</a>
+</div>
+{% endblock %}

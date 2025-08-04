@@ -18,13 +18,13 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
-from users.views import CustomLoginView 
+from users.views import login_view 
 from site_web.views import HomeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomeView.as_view(), name='home'),
-     path('auth/', CustomLoginView.as_view(), name='login'),  
+     path('auth/', login_view, name='login'),  
     path('users/', include('users.urls')),              
     path('articles/', include('articles.urls')),
     path('tinymce/', include('tinymce.urls')),

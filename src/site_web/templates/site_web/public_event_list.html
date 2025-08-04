@@ -43,7 +43,8 @@
                         </span>
                         <h5 class="card-title">{{ event.title }}</h5>
                         <p class="card-text">
-                            <i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}<br/>
+                               <i class="fas fa-map-marker-alt me-2"></i>{{ event.lieu_gps }}
                         </p>
                     </div>
                     <div class="card-footer bg-white">
@@ -76,6 +77,7 @@
                         <p class="card-text">
                             <i class="fas fa-calendar-alt me-2"></i>{{ event.date|date:"d M Y" }}
                             <i class="fas fa-map-marker-alt ms-3 me-2"></i>{{ event.location }}
+                            <i class="fas fa-map-marker-alt ms-3 me-2"></i>{{ event.lieu_gps }}
                         </p>
                         <a href="{% url 'public_event_detail' event.pk %}" class="btn btn-outline-primary btn-sm">
                             Voir le compte-rendu

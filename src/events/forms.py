@@ -5,7 +5,7 @@ from django.utils import timezone
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['title', 'content', 'image', 'date', 'location', 'is_published']
+        fields = ['title', 'content', 'image', 'date', 'location', 'lieu_gps','is_published']
         widgets = {
             'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'content': forms.Textarea(attrs={'rows': 4}),

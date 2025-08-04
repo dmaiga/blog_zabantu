@@ -9,6 +9,7 @@ class Event(models.Model):
     image = models.ImageField(upload_to='events/')
     date = models.DateTimeField()
     location = models.CharField(max_length=100)
+    lieu_gps= models.URLField(max_length=550)
     is_published = models.BooleanField(default=False)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,  # Utilisation du modèle User personnalisé

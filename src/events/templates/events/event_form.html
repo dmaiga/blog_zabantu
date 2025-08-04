@@ -47,6 +47,13 @@
                                     <div class="text-danger">{{ form.location.errors }}</div>
                                 {% endif %}
                             </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.lieu_gps.id_for_label }}" class="form-label">Coordonnées</label>
+                                {{ form.lieu_gps }}
+                                {% if form.lieu_gps.errors %}
+                                    <div class="text-danger">{{ form.lieu_gps.errors }}</div>
+                                {% endif %}
+                            </div>
                         </div>
                         
                         <div class="mb-3">

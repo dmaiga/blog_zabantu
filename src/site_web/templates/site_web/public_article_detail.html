@@ -73,16 +73,10 @@
         {{ article.content|safe }}
     </div>
     
-    {% if author %}
-    <div class="author-minimal">
-        <p>
-            Article par 
-            <a href="{% url 'public_member_detail' article.author.id %}" class="author-link">
-                {{ author.full_name }}
-            </a>
-        </p>
-    </div>
-    {% endif %}
+  {% for author in authors %}
+    <p>Auteur : {{ author.nom }} {{ author.prenom }}</p>
+{% endfor %}
+
     
     <a href="{% url 'home' %}" class="d-block mt-4">
         &larr; Retour aux publications

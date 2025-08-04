@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from articles.models import Article
+from articles.models import Article,Guelekan
 from events.models import Event
 from django.views.generic import TemplateView
 from django.utils import timezone
@@ -25,6 +25,7 @@ def public_article_list(request):
         'categories': categories
     })
 
+from django.http import Http404
 
 def public_article_detail(request, slug):
     article = get_object_or_404(
@@ -33,14 +34,16 @@ def public_article_detail(request, slug):
         status='published'
     )
     
-    # Vérifier si l'article est programmé pour plus tard
     if article.publish_at and article.publish_at > timezone.now():
         raise Http404("Cet article n'est pas encore publié")
     
+    authors = article.authors.all()
+    
     return render(request, 'site_web/public_article_detail.html', {
         'article': article,
-        'author': article.author.get_public_profile() if article.author else None
-        })
+        'authors': authors,
+    })
+
 
 
 from django.shortcuts import render, get_object_or_404
@@ -104,10 +107,9 @@ class HomeView(TemplateView):
             is_published=True,
             date__gte=timezone.now()
         ).order_by('date')[:3]
-        
-        # Mise en avant spéciale (ex: dernier séminaire)
-        context['featured_seminar'] = Article.objects.filter(
-            category='seminaire',
+         # Mise en avant spéciale (ex: dernier séminaire)
+        context['featured_seminar'] = Guelekan.objects.filter(
+            
             status='published'
         ).order_by('-created_at').first()
         
@@ -139,4 +141,26 @@ def public_member_detail(request, pk):
     
     return render(request, 'site_web/public_member_detail.html', {
         'member': member.get_public_profile()
+    })
+
+from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
+
+def public_guelekan_list(request):
+    # Récupérer seulement les Guelekan publiés
+    guelekans = Guelekan.objects.filter(status='published').order_by('-publish_at')
+    
+    # Pagination (10 éléments par page)
+    paginator = Paginator(guelekans, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'site_web/public_guelekan_list.html', {
+        'page_obj': page_obj,
+    })
+
+def public_guelekan_detail(request, slug):
+    guelekan = get_object_or_404(Guelekan, slug=slug, status='published')
+    return render(request, 'site_web/public_guelekan_detail.html', {
+        'guelekan': guelekan,
     })

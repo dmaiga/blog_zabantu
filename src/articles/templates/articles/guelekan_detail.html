@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ guelekan.title }}</h1>
+        <span class="badge 
+            {% if guelekan.status == 'published' %}bg-success
+            {% else %}bg-warning{% endif %}">
+            {{ guelekan.get_status_display }}
+        </span>
+    </div>
+
+    {% if guelekan.cover_image %}
+    <img src="{{ guelekan.cover_image.url }}" 
+         class="img-fluid rounded mb-4" 
+         alt="{{ guelekan.title }}">
+    {% endif %}
+
+    <div class="mb-4">
+        {{ guelekan.content|safe }}
+    </div>
+
+    {% if guelekan.pdf_file %}
+    <div class="mb-4">
+        <a href="{{ guelekan.pdf_file.url }}" class="btn btn-primary" target="_blank">
+            <i class="fas fa-file-pdf"></i> Télécharger le PDF
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="d-flex justify-content-between">
+        <a href="{% url 'guelekan_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+        
+        <div class="btn-group">
+            <a href="{% url 'guelekan_update' guelekan.slug %}" class="btn btn-outline-primary">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+            {% if guelekan.status == 'published' %}
+                <a href="{% url 'unpublish_guelekan' guelekan.slug %}" class="btn btn-outline-warning">
+                    <i class="fas fa-eye-slash"></i> Dépublier
+                </a>
+            {% else %}
+                <a href="{% url 'publish_guelekan' guelekan.slug %}" class="btn btn-outline-success">
+                    <i class="fas fa-paper-plane"></i> Publier
+                </a>
+            {% endif %}
+            <a href="{% url 'guelekan_delete' guelekan.slug %}" class="btn btn-outline-danger">
+                <i class="fas fa-trash"></i> Supprimer
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base_public.html" %}
+
+{% block title %}{{ guelekan.title }} | {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <article>
+                <header class="mb-4">
+                    <h1>{{ guelekan.title }}</h1>
+                    {% if guelekan.subtitle %}
+                    <h2 class="h4 text-muted">{{ guelekan.subtitle }}</h2>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <small class="text-muted">
+                            Publié le {{ guelekan.publish_at|date:"d F Y" }}
+                        </small>
+                    </div>
+                </header>
+                
+                {% if guelekan.cover_image %}
+                <figure class="figure mb-4">
+                    <img src="{{ guelekan.cover_image.url }}" 
+                         class="figure-img img-fluid rounded" 
+                         alt="{{ guelekan.title }}">
+                </figure>
+                {% endif %}
+                
+                <div class="article-content mb-5">
+                    {{ guelekan.content|safe }}
+                </div>
+                
+                {% if guelekan.pdf_file %}
+                <div class="mb-5">
+                    <a href="{{ guelekan.pdf_file.url }}" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-file-pdf"></i> Télécharger le PDF
+                    </a>
+                </div>
+                {% endif %}
+                
+                <footer>
+                    <a href="{% url 'public_guelekan_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </a>
+                </footer>
+            </article>
+        </div>
+    </div>
+</div>
+{% endblock %}

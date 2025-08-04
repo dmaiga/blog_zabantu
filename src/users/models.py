@@ -5,11 +5,14 @@ class CustomUser(AbstractUser):
     ROLE_CHOICES = [
         ('admin', 'Administrateur'),
         ('moderateur', 'Modérateur'),
-        ('membre', 'Membre'),
+        ('membre','Membre'),
+        
     ]
-    
+    #identite
+    nom = models.CharField(max_length=100)  
+    prenom = models.CharField(max_length=100) 
     #Role et statut
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='membre')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='moderateur')
     date_started = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     #Identite et contact
@@ -20,6 +23,7 @@ class CustomUser(AbstractUser):
     bio = models.TextField(blank=True, null=True)
     job_title = models.CharField(max_length=100, blank=True, null=True)
     department = models.CharField(max_length=100, blank=True, null=True)
+    
     #linkedin
     social_facebook = models.URLField(blank=True, null=True)
     social_linkedin = models.URLField(blank=True, null=True)
@@ -28,17 +32,14 @@ class CustomUser(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     
-    @property
-    def has_admin_rights(self):
-        return self.role in ['admin', 'moderateur']
-
+    REQUIRED_FIELDS = ['nom', 'prenom', 'email']
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})"
     
     def get_public_profile(self):
         """Retourne les données du profil public"""
         return {
-            'full_name': f"{self.first_name} {self.last_name}",
+            'full_name': f"{self.prenom} {self.nom}",
             'job': f"{self.job_title} - {self.department}" if self.job_title and self.department else self.job_title or self.department or "",
             'bio': self.bio,
             'profile_picture': self.profile_picture.url if self.profile_picture else '/static/profiles/default.png',
@@ -49,3 +50,4 @@ class CustomUser(AbstractUser):
             },
             'join_date': self.date_started
         }   
+    

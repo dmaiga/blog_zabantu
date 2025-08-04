@@ -17,7 +17,7 @@
 {% endblock %}
 
 {% block banner_subtitle %}
-    Découvrez les travaux du cercle Zabantu
+    Découvrez les travaux du Groupe de recherche Zabantu
 {% endblock %}
 
 {% block content %}
@@ -92,9 +92,23 @@
                     </a>
                 </li>
                 <li class="filter-item">
-                    <a href="{% url 'public_article_list' %}?type=seminaire" 
+                    <a href="#" 
                        class="filter-link {% if current_filter == 'seminaire' %}active{% endif %}">
-                        Séminaires
+                        Articles
+                        <span class="badge bg-secondary float-end">{{ categories.seminaire }}</span>
+                    </a>
+                </li>
+                <li class="filter-item">
+                    <a href="#" 
+                       class="filter-link {% if current_filter == 'seminaire' %}active{% endif %}">
+                        Ouvrages
+                        <span class="badge bg-secondary float-end">{{ categories.seminaire }}</span>
+                    </a>
+                </li>
+                 <li class="filter-item">
+                    <a href="#" 
+                       class="filter-link {% if current_filter == 'seminaire' %}active{% endif %}">
+                        Policy Briefs
                         <span class="badge bg-secondary float-end">{{ categories.seminaire }}</span>
                     </a>
                 </li>
@@ -108,7 +122,7 @@
                 <li class="filter-item">
                     <a href="{% url 'public_article_list' %}?type=publication" 
                        class="filter-link {% if current_filter == 'publication' %}active{% endif %}">
-                        Publications
+                        Rapports
                         <span class="badge bg-secondary float-end">{{ categories.publication }}</span>
                     </a>
                 </li>

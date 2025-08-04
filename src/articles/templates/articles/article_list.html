@@ -2,50 +2,120 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="mb-4">Mes Articles</h1>
+    <h1 class="mb-4">Gestion des Articles</h1>
     
-    <a href="{% url 'article_create' %}" class="btn btn-primary mb-3">
-        <i class="fas fa-plus"></i> Nouvel article
-    </a>
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="category" class="form-label">Catégorie</label>
+                    <select name="category" id="category" class="form-select">
+                        <option value="">Toutes les catégories</option>
+                        {% for value, label in categories %}
+                            <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Statut</label>
+                    <select name="status" id="status" class="form-select">
+                        <option value="">Tous les statuts</option>
+                        {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="date_from" class="form-label">Date de début</label>
+                    <input type="date" name="date_from" id="date_from" 
+                           class="form-control" value="{{ date_from|default:'' }}">
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="date_to" class="form-label">Date de fin</label>
+                    <input type="date" name="date_to" id="date_to" 
+                           class="form-control" value="{{ date_to|default:'' }}">
+                </div>
+                
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-filter"></i> Appliquer les filtres
+                    </button>
+                    <a href="{% url 'article_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i> Réinitialiser
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h4 mb-0">Liste des articles ({{ articles.count }})</h2>
+        <a href="{% url 'article_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Créer un article
+        </a>
+    </div>
 
     <div class="table-responsive">
-        <table class="table table-hover">
-            <thead class="thead-light">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
                 <tr>
                     <th>Titre</th>
                     <th>Catégorie</th>
                     <th>Statut</th>
-                    <th>Date</th>
+                    <th>Date création</th>
+                    <th>Date publication</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for article in articles %}
                 <tr>
-                    <td>{{ article.title }}</td>
-                    <td>{{ article.get_category_display }}</td>
+                    <td>
+                        <a href="{% url 'article_detail' article.slug %}" class="text-decoration-none">
+                            {{ article.title|truncatechars:40 }}
+                        </a>
+                        {% if article.publish_at %}
+                            <br>
+                            <small class="text-muted">Publié le: {{ article.publish_at|date:"d/m/Y H:i" }}</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge bg-secondary">
+                            {{ article.get_category_display }}
+                        </span>
+                    </td>
                     <td>
                         <span class="badge 
-                            {% if article.real_status == 'published' %}bg-success
-                            {% elif article.real_status == 'planned' %}bg-info
+                            {% if article.status == 'published' %}bg-success
                             {% else %}bg-warning{% endif %}">
                             {{ article.get_status_display }}
-                            {% if article.is_planned %}
-                                ({{ article.publish_at|date:"d/m/Y H:i" }})
-                            {% endif %}
                         </span>
                     </td>
                     <td>{{ article.created_at|date:"d/m/Y" }}</td>
                     <td>
-                        <div class="btn-group">
-                            <a href="{% url 'article_detail' article.slug %}" class="btn btn-sm btn-outline-primary">
+                        {% if article.status == 'published' and article.publish_at %}
+                            {{ article.publish_at|date:"d/m/Y" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{% url 'article_detail' article.slug %}" class="btn btn-outline-primary" title="Voir">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            {% if article.real_status == 'draft' %}
-                                <a href="{% url 'article_update' article.slug %}" class="btn btn-sm btn-outline-secondary">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="{% url 'publish_article' article.slug %}" class="btn btn-sm btn-outline-success">
+                            <a href="{% url 'article_update' article.slug %}" class="btn btn-outline-secondary" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {% if article.status == 'draft' %}
+                                <a href="{% url 'publish_article' article.slug %}" class="btn btn-outline-success" title="Publier">
                                     <i class="fas fa-paper-plane"></i>
                                 </a>
                             {% endif %}
@@ -54,7 +124,10 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center">Aucun article trouvé</td>
+                    <td colspan="6" class="text-center py-4">
+                        <i class="fas fa-inbox fa-2x text-muted mb-2"></i><br>
+                        Aucun article trouvé avec ces critères
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -1,15 +1,10 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.utils.text import slugify,Truncator
+from django.utils.text import slugify, Truncator
 from tinymce.models import HTMLField
-import uuid
-from django.conf import settings
-
 from django.utils import timezone
-from django.core.exceptions import ValidationError
-
+import uuid
 import re
-
 
 User = get_user_model()
 
@@ -21,70 +16,58 @@ class Article(models.Model):
         ('draft', 'Brouillon'),
         ('published', 'Publié'),
     )
-    
+
     CATEGORY_CHOICES = (
-        ('seminaire', 'Séminaire Guelekan'),
-        ('analyse', 'Analyse'),
-        ('publication', 'Publication'),
+        ('analyse', 'Analyses'),
+        ('article', 'Articles'),
+        ('policy', 'Policy Briefs'),
+        ('ouvrage', 'Ouvrages'),
+        ('rapport', 'Rapports'),
     )
 
     category = models.CharField(
         max_length=20,
         choices=CATEGORY_CHOICES,
-        default='publication'
+        default='article'  
     )
 
     title = models.CharField(max_length=255)
+    subtitle = models.CharField(max_length=500)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='articles')
+    authors = models.ManyToManyField(User, related_name='articles')
     content = HTMLField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='published')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    publish_at = models.DateTimeField(null=True, blank=True, verbose_name="Planifier la publication")
-    
-    # Upload PDF version (facultatif)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+
     pdf_file = models.FileField(upload_to=article_upload_path, blank=True, null=True)
     cover_image = models.ImageField(upload_to='articles/covers/', blank=True, null=True)
-    #meta
+
     meta_title = models.CharField(max_length=60, blank=True, verbose_name="Titre SEO")
     meta_description = models.CharField(max_length=160, blank=True, verbose_name="Description SEO")
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    publish_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Date de publication programmée"
+    )
     class Meta:
         ordering = ['-created_at']
 
     def __str__(self):
         return self.title
-    
+
     def is_published(self):
-        if self.status != 'published':
-            return False
-        if self.publish_at and self.publish_at > timezone.now():
-            return False
-        return True
-    
-    def get_status_display(self):
-        """Surcharge pour afficher le statut réel"""
-        status = self.publication_status
-        return {
-            'planned': "Planifié",
-            'published': "Publié",
-            'draft': "Brouillon"
-        }.get(status, status)
-    
-    @property
-    def is_planned(self):
-        """Vérifie si l'article est planifié"""
-        return self.publication_status == 'planned'
-    
+        return self.status == 'published'
+
     def save(self, *args, **kwargs):
         if not self.meta_title:
-            self.meta_title = Truncator(self.title).chars(60)  # Bonne syntaxe
-    
+            self.meta_title = Truncator(self.title).chars(60)
+
         if not self.meta_description:
-             clean_content = re.sub('<[^<]+?>', '', self.content)
-             self.meta_description = Truncator(clean_content).chars(160)
-        # Génération du slug unique si vide
+            clean_content = re.sub('<[^<]+?>', '', self.content)
+            self.meta_description = Truncator(clean_content).chars(160)
+
         if not self.slug:
             base_slug = slugify(self.title)
             slug = base_slug
@@ -93,22 +76,60 @@ class Article(models.Model):
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug
+
         super().save(*args, **kwargs)
 
-    @property
-    def publication_status(self):
-            """Retourne le statut réel en tenant compte de la planification"""
-            now = timezone.now()
-            if self.status == 'published':
-                if self.publish_at and self.publish_at > now:
-                    return 'planned'
-                return 'published'
-            return 'draft'
-        
-    def clean(self):
-            """Validation supplémentaire"""
-            if self.status == 'published' and self.publish_at and self.publish_at > timezone.now():
-                raise ValidationError(
-                    "Vous ne pouvez pas mettre un article en 'publié' avec une date future. "
-                    "Utilisez le statut 'brouillon' et planifiez la date."
-                )   
+
+
+def guelekan_upload_path(instance, filename):
+    return f'guelekan/files/{uuid.uuid4()}_{filename}'
+
+class Guelekan(models.Model):
+    STATUS_CHOICES = (
+        ('draft', 'Brouillon'),
+        ('published', 'Publié'),
+    )
+
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    subtitle = models.CharField(max_length=500, blank=True)
+    content = HTMLField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+
+    cover_image = models.ImageField(upload_to='guelekan/covers/', blank=True, null=True)
+    pdf_file = models.FileField(upload_to=guelekan_upload_path, blank=True, null=True)
+
+    meta_title = models.CharField(max_length=60, blank=True)
+    meta_description = models.CharField(max_length=160, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    publish_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Date de publication programmée"
+    )
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
+
+    def is_published(self):
+        return self.status == 'published'
+
+    def save(self, *args, **kwargs):
+        if not self.meta_title:
+            self.meta_title = Truncator(self.title).chars(60)
+        if not self.meta_description:
+            clean_content = re.sub('<[^<]+?>', '', self.content)
+            self.meta_description = Truncator(clean_content).chars(160)
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            while Guelekan.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
