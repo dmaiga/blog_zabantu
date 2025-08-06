@@ -211,8 +211,8 @@ Economy | Conflict | State
                     Economie-Conflit-Etat. Nos travaux sont principalement axés sur la compréhension des dynamiques économiques, de 
                     conflit armé, des politiques publiques; dans le paradigme d'une recherche ancrée sur les réalités locales.    
                 </p>
-                <a href="#publications" class="btn btn-primary btn-lg me-2">Equipes</a>
-                <a href="#events" class="btn btn-outline-primary btn-lg">Identité</a>
+                <a href="{% url 'membre_liste' %}" class="btn btn-primary btn-lg me-2">Equipes</a>
+                <a href="{% url 'about' %}" class="btn btn-outline-primary btn-lg">Identité</a>
             </div>
             <div class="col-lg-6">
                 <img src="/static/site_web/images/hero-image_2.jpeg" alt="Réunion d'experts" class="img-fluid rounded-3 shadow">
@@ -247,7 +247,7 @@ Economy | Conflict | State
                         </div>
                     </div>
                     <div class="card-footer bg-white border-0">
-                        <a href="#" class="btn btn-primary">Plus d'informations</a>
+                        <a href="{% url 'public_event_detail' event.pk %}" class="btn btn-primary">Plus d'informations</a>
                     </div>
                 </div>
             </div>
@@ -270,7 +270,7 @@ Economy | Conflict | State
         <div class="row g-0 rounded overflow-hidden shadow">
             <div class="col-lg-6 featured-content">
                 <span class="badge bg-primary mb-3">{{ featured_seminar.get_category_display }}</span>
-                <h2>Dernier Séminaire</h2>
+                <h2>Dernier Séminaire Gɛlɛkan</h2>
                 <h3>{{ featured_seminar.title }}</h3>
                 <div class="d-flex align-items-center mb-4">
                     <div class="me-3">

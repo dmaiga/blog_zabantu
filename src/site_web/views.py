@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from articles.models import Article,Guelekan
 from events.models import Event
+from gallery.models import Photo,Gallery
 from django.views.generic import TemplateView
 from django.utils import timezone
 from django.db.models import Count,Q
@@ -9,16 +10,247 @@ from users.models import CustomUser
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 
-
-
-
-
-#05_08_2025
-#------------------------------------------------------------------------------
-from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core.cache import cache
+
+#------------------------------------------------------------------------------
+#06_08_2025
+# views.py
+
+from django.shortcuts import render, get_object_or_404
+from users.models import CustomUser
+from articles.models import Article
+
+def membre_liste(request):
+    # Récupérer tous les membres actifs
+    membres = CustomUser.objects.filter(is_active=True).order_by('nom')
+    
+    # Préparer les données pour chaque membre
+    membres_data = []
+    for membre in membres:
+        publications_recentes = Article.objects.filter(
+            authors=membre,
+            status='published'
+        ).order_by('-publish_at')[:3]  # 3 publications les plus récentes
+        
+        membres_data.append({
+            'membre': membre,
+            'publications_count': Article.objects.filter(authors=membre, status='published').count(),
+            'publications_recentes': publications_recentes,
+        })
+    
+    context = {
+        'membres': membres_data,
+        'title': 'Notre équipe de recherche'
+    }
+    return render(request, 'site_web/public_membre_liste.html', context)
+
+def membre_detail(request, user_id):
+    membre = get_object_or_404(CustomUser, id=user_id, is_active=True)
+    
+    # Récupérer toutes les publications publiées du membre
+    publications = Article.objects.filter(
+        authors=membre,
+        status='published'
+    ).order_by('-publish_at')
+    
+    context = {
+        'membre': membre,
+        'publications': publications,
+        'title': f'Profil de {membre.prenom} {membre.nom}'
+    }
+    return render(request, 'site_web/public_membre_detail.html', context)
+
+
+
+
+
+def contact(request):
+    # Liste des partenaires institutionnels
+    partners = [
+        {
+            'name': "Université de Ségou",
+            'logo': "users/images/partenaires/iufp_segou.png",
+            'url': "#"  # Remplacez par l'URL réelle
+        },
+        {
+            'name': "Université de Ghana",
+            'logo': "users/images/partenaires/ghana.svg",
+            'url': "#"
+        },
+        {
+            'name': "Université Alassane Ouattara de Bouaké",
+            'logo': "users/images/partenaires/uni_ao.webp",
+            'url': "#"
+        },
+        {
+            'name': "Université de Mons",
+            'logo': "users/images/partenaires/uni_mons.svg",
+            'url': "#"
+        },
+        {
+            'name': "Université Libre de Bruxelles",
+            'logo': "users/images/partenaires/ulb.svg",
+            'url': "#"
+        },
+        {
+            'name': "Association pour la Promotion du Numérique en Afrique",
+            'logo': "users/images/partenaires/apna_logo.png",
+            'url': "#"
+        }
+    ]
+
+    # Coordonnées de contact
+    contact_info = {
+        'institution': "Campus universitaire de Badalabougou",
+        'address': "BP 1234 Bamako, Mali",
+        'phone': "+223 77 94 14 70",
+        'email': "info@zabantu.net",
+        'opening_hours': {
+            'weekdays': "Lundi - Vendredi : 8h - 17h",
+            'saturday': "Samedi : 9h - 13h"
+        }
+    }
+
+    # Traitement du formulaire
+    #if request.method == 'POST':
+    #    name = request.POST.get('name')
+    #    email = request.POST.get('email')
+    #    subject = request.POST.get('subject')
+    #    message = request.POST.get('message')
+#
+#   #    # Validation basique
+#   #    if not all([name, email, subject, message]):
+#   #        messages.error(request, "Veuillez remplir tous les champs obligatoires.")
+    #    else:
+    #        # Construction du sujet du mail
+    #        subject_map = {
+    #            'collaboration': "Proposition de collaboration",
+    #            'research': "Question de recherche",
+    #            'publication': "Demande concernant une publication",
+    #            'conference': "Invitation à une conférence",
+    #            'media': "Demande médiatique",
+    #            'other': "Demande de contact"
+    #        }
+    #        email_subject = f"[Contact Zabantu] {subject_map.get(subject, 'Demande')} de {name}"
+#
+#   #        # Construction du corps du mail
+#   #        email_body = f"""
+#   #        Nouveau message reçu via le formulaire de contact:
+    #        
+    #        Nom: {name}
+    #        Email: {email}
+    #        Sujet: {subject_map.get(subject, subject)}
+    #        
+    #        Message:
+    #        {message}
+    #        
+    #        ---
+    #        Cet email a été envoyé depuis le formulaire de contact de Zabantu.
+    #        """
+#
+#   #        try:
+#   #            # Envoi de l'email
+#   #            send_mail(
+    #                email_subject,
+    #                email_body,
+    #                settings.DEFAULT_FROM_EMAIL,
+    #                [settings.CONTACT_EMAIL],  # Configurez ceci dans vos settings
+    #                fail_silently=False,
+    #            )
+    #            
+    #            # Envoi d'une copie au visiteur
+    #            if settings.SEND_COPY_TO_VISITOR:
+    #                send_mail(
+    #                    f"Confirmation de votre message à Zabantu",
+    #                    f"Nous avons bien reçu votre message et y répondrons dans les plus brefs délais.\n\nVotre message:\n{message}",
+    #                    settings.DEFAULT_FROM_EMAIL,
+    #                    [email],
+    #                    fail_silently=True,
+    #                )
+    #            
+    #            messages.success(request, "Votre message a été envoyé avec succès!")
+    #            return redirect('contact')
+    #           
+    #       except Exception as e:
+    #           messages.error(request, f"Une erreur s'est produite lors de l'envoi du message: {str(e)}")
+
+    # Coordonnées pour la carte (Badalabougou, Mali)
+    map_embed_url = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3859.227623693815!2d-7.987846684716715!3d12.672381921394377!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDQwJzIwLjYiTiA3wrA1OScxNS4xIlc!5e1!3m2!1sfr!2sfr!4v1620000000000!5m2!1sfr!2sfr"
+
+    context = {
+        'partners': partners,
+        'contact_info': contact_info,
+        'map_embed_url': map_embed_url,
+        'page_title': "Contact - Zabantu",
+        'social_links': {
+            'linkedin': "https://www.linkedin.com/company/zabantu-ecs/about/",
+            'facebook': "https://www.facebook.com/zabantu.ecs",
+            'twitter': "#",
+            'researchgate': "#"
+        }
+    }
+
+    return render(request, 'site_web/public_contact.html', context)
+
+
+def liste_galeries(request):
+    """Affiche la liste des galeries (version publique)"""
+    galeries_list = Gallery.objects.all().order_by('-created_at')
+    paginator = Paginator(galeries_list, 12)
+    
+    page_number = request.GET.get('page')
+    galeries = paginator.get_page(page_number)
+    
+    return render(request, 'site_web/public_liste_galeries.html', {
+        'galeries': galeries,
+        'page_title': "Galerie Photos du Blog"
+    })
+
+def detail_galerie(request, slug):
+    """Affiche une galerie spécifique avec ses photos"""
+    galerie = get_object_or_404(Gallery, slug=slug)
+    photos = galerie.photos.all().order_by('-uploaded_at')
+    
+    paginator = Paginator(photos, 24)
+    page_number = request.GET.get('page')
+    photos_page = paginator.get_page(page_number)
+    
+    return render(request, 'site_web/public_detail_galerie.html', {
+        'galerie': galerie,
+        'photos': photos_page,
+        'page_title': f"Galerie : {galerie.title}"
+    })
+
+def toutes_photos(request):
+    """Affiche toutes les photos du site"""
+    photos_list = Photo.objects.all().order_by('-uploaded_at')
+    paginator = Paginator(photos_list, 36)
+    
+    page_number = request.GET.get('page')
+    photos = paginator.get_page(page_number)
+    
+    return render(request, 'site_web/public_toutes_photos.html', {
+        'photos': photos,
+        'page_title': "Toutes les photos du blog"
+    })
+
+def detail_photo(request, pk):
+    """Affiche le détail d'une photo spécifique"""
+    photo = get_object_or_404(Photo, pk=pk)
+    return render(request, 'site_web/public_detail_photo.html', {
+        'photo': photo,
+        'page_title': f"Photo : {photo.title}"
+    })
+#06_08_2025
+#------------------------------------------------------------------------------
+#Start with public gallery 
+#Contact
+#membres
+#------------------------------------------------------------------------------
+#05_08_2025
+
 
 User = get_user_model()
 
@@ -110,7 +342,7 @@ def about_view(request):
 
 
 
-
+#05_08
 #______________________________________________________________________________
 
 CATEGORY_LABELS = {
@@ -214,6 +446,8 @@ def public_event_list(request):
         'past_events': past_events
     })
 
+
+
 def public_event_detail(request, pk):
     """Détail d'un événement public"""
     event = get_object_or_404(
@@ -222,12 +456,27 @@ def public_event_detail(request, pk):
         is_published=True
     )
     
+    # Récupérer les participants organisateurs
+    organizers = {
+        'moderators': event.moderators.all(),
+        'speakers': event.speakers.all(),
+        'trainers': event.trainers.all(),
+    }
+    
     # Vérifier si l'événement est passé
     is_past_event = event.date < timezone.now()
     
+    # Événements similaires (même type)
+    similar_events = Event.objects.filter(
+        is_published=True,
+        event_type=event.event_type
+    ).exclude(pk=event.pk).order_by('-date')[:3]
+    
     return render(request, 'site_web/public_event_detail.html', {
         'event': event,
-        'is_past_event': is_past_event
+        'is_past_event': is_past_event,
+        'organizers': organizers,
+        'similar_events': similar_events,
     })
 
 

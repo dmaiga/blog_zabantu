@@ -1,0 +1,364 @@
+{% extends 'base_public.html' %}
+{% load static %}
+
+{% block banner_title %}Contactez-nous{% endblock %}
+{% block banner_subtitle %}Economy | Conflict | State{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --zabantu-primary: #6f826a;
+        --zabantu-secondary: #bf9264;
+        --zabantu-accent: #bbd8a3;
+        --zabantu-light: #f0f1c5;
+        --zabantu-dark: #2c3e2c;
+    }
+
+    /* Structure générale */
+    .contact-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    /* Section Contact Info */
+    .contact-info-section {
+        background: linear-gradient(135deg, rgba(240, 241, 197, 0.2) 0%, rgba(187, 216, 163, 0.1) 100%);
+        border-radius: 12px;
+        padding: 2.5rem;
+        margin-bottom: 3rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    }
+
+    .contact-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+
+    .contact-info-card {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+    }
+
+    .contact-info-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .contact-icon {
+        font-size: 1.8rem;
+        color: var(--zabantu-primary);
+        margin-bottom: 1rem;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .social-link {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(111, 130, 106, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--zabantu-primary);
+        transition: all 0.3s ease;
+    }
+
+    .social-link:hover {
+        background: var(--zabantu-primary);
+        color: white;
+    }
+
+    /* Formulaire */
+    .form-section {
+        background: white;
+        border-radius: 12px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        margin-bottom: 3rem;
+    }
+
+    .form-title {
+        color: var(--zabantu-dark);
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+
+    .form-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: var(--zabantu-secondary);
+    }
+
+    .form-control {
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--zabantu-primary);
+        box-shadow: 0 0 0 3px rgba(111, 130, 106, 0.2);
+    }
+
+    .btn-submit {
+        background: var(--zabantu-primary);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        background: var(--zabantu-secondary);
+        transform: translateY(-2px);
+    }
+
+    /* FAQ */
+    .faq-section {
+        background: white;
+        border-radius: 12px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        margin-bottom: 3rem;
+    }
+
+    .faq-item {
+        border-bottom: 1px solid #f0f0f0;
+        padding: 1.5rem 0;
+    }
+
+    .faq-question {
+        font-weight: 600;
+        color: var(--zabantu-dark);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .faq-question::after {
+        content: '+';
+        font-size: 1.5rem;
+        color: var(--zabantu-primary);
+    }
+
+    .faq-question[aria-expanded="true"]::after {
+        content: '-';
+    }
+
+    .faq-answer {
+        padding-top: 1rem;
+        color: #555;
+    }
+
+    /* Carte (placée en bas) */
+    .map-section {
+        margin-top: 3rem;
+    }
+
+    .map-container {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        height: 400px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .contact-info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .contact-container {
+            padding: 1rem;
+        }
+        
+        .form-section, .faq-section, .contact-info-section {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contact-container">
+    <!-- Section 1: Informations de contact -->
+    <section class="contact-info-section">
+        <h2 class="text-center mb-4">Comment nous contacter</h2>
+        <div class="contact-info-grid">
+            <!-- Adresse -->
+            <div class="contact-info-card">
+                <div class="contact-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h4>Notre adresse</h4>
+                <p>{{ contact_info.institution }}</p>
+                <p>{{ contact_info.address }}</p>
+            </div>
+            
+            <!-- Téléphone -->
+            <div class="contact-info-card">
+                <div class="contact-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <h4>Téléphone</h4>
+                <p><a href="tel:{{ contact_info.phone }}">{{ contact_info.phone }}</a></p>
+                <p>Lundi-Vendredi: 8h-17h</p>
+            </div>
+            
+            <!-- Email -->
+            <div class="contact-info-card">
+                <div class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h4>Email</h4>
+                <p><a href="mailto:{{ contact_info.email }}">{{ contact_info.email }}</a></p>
+                <div class="social-links">
+                    <a href="{{ social_links.linkedin }}" class="social-link" target="_blank">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="{{ social_links.twitter }}" class="social-link" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="{{ social_links.facebook }}" class="social-link" target="_blank">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Formulaire -->
+    <section class="form-section">
+        <h3 class="form-title">Envoyez-nous un message</h3>
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="name" class="form-label">Nom complet*</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email*</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="col-12">
+                    <label for="subject" class="form-label">Sujet*</label>
+                    <select class="form-select" id="subject" name="subject" required>
+                        <option value="" selected disabled>Sélectionnez un sujet</option>
+                        <option value="collaboration">Collaboration</option>
+                        <option value="information">Demande d'information</option>
+                        <option value="media">Demande médiatique</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label for="message" class="form-label">Message*</label>
+                    <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-submit">
+                        <i class="fas fa-paper-plane me-2"></i>Envoyer le message
+                    </button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <!-- Section 3: FAQ -->
+    <section class="faq-section">
+        <h3 class="form-title">Questions fréquentes</h3>
+        
+        <div class="accordion" id="faqAccordion">
+            <div class="faq-item">
+                <div class="faq-question" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                    Comment puis-je collaborer avec votre équipe ?
+                </div>
+                <div id="collapseOne" class="collapse faq-answer" aria-labelledby="headingOne">
+                    Nous sommes ouverts aux collaborations interdisciplinaires. Veuillez nous contacter via le formulaire en précisant votre domaine d'expertise et la nature de la collaboration envisagée.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" id="headingTwo" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                    Où puis-je trouver vos publications ?
+                </div>
+                <div id="collapseTwo" class="collapse faq-answer" aria-labelledby="headingTwo">
+                    Nos publications sont disponibles dans la section dédiée de notre site web. Certains travaux peuvent être disponibles sur demande.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" id="headingThree" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                    Quels sont vos horaires d'ouverture ?
+                </div>
+                <div id="collapseThree" class="collapse faq-answer" aria-labelledby="headingThree">
+                    Notre bureau est ouvert du lundi au vendredi de 8h à 17h. Les rendez-vous en dehors de ces horaires peuvent être arrangés sur demande.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Carte (placée en bas) -->
+    <section class="map-section">
+        <h3 class="form-title">Nous trouver</h3>
+        <div class="map-container">
+            <iframe src="{{ map_embed_url }}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Validation du formulaire
+    (function() {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        
+        Array.from(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+
+    // Pré-remplissage intelligent du formulaire
+    document.getElementById('subject').addEventListener('change', function() {
+        const messageField = document.getElementById('message');
+        const nameField = document.getElementById('name').value || '[Votre nom]';
+        
+        const templates = {
+            'collaboration': `Cher(e) Responsable,\n\nJe me permets de vous contacter concernant une possible collaboration dans le domaine de [précisez]. Mon travail porte sur [décrivez brièvement].\n\nJe pense que nos travaux pourraient se compléter sur :\n- Point 1\n- Point 2\n\nCordialement,\n${nameField}`,
+            'information': `Bonjour,\n\nJe souhaiterais obtenir des informations concernant [précisez].\n\nPourriez-vous m'indiquer :\n- Question 1\n- Question 2\n\nMerci par avance,\n${nameField}`,
+            'media': `Bonjour,\n\nJe représente [Média] et souhaiterais vous interviewer à propos de [sujet].\n\nDisponibilités :\n- Option 1\n- Option 2\n\nCordialement,\n${nameField}`
+        };
+        
+        if (templates[this.value]) {
+            messageField.value = templates[this.value];
+            messageField.focus();
+        }
+    });
+</script>
+{% endblock %}

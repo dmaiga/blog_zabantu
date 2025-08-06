@@ -1,135 +1,458 @@
 {% extends 'base_public.html' %}
 
-{% block title %}{{ article.title }} | Zabantu{% endblock %}
+{% block title %}{{ event.title }} | Zabantu{% endblock %}
 
-{% block content %}
+{% block extra_css %}
 <style>
-    .article-container {
-        max-width: 800px;
+    /* Styles généraux */
+    .event-container {
+        max-width: 1000px;
         margin: 2rem auto;
         padding: 0 1rem;
     }
     
-    .article-header {
+    .event-header {
         margin-bottom: 2rem;
+        text-align: center;
     }
     
-    .article-title {
+    .event-title {
         color: var(--zabantu-primary);
-        font-size: 2rem;
+        font-size: 2.2rem;
         margin-bottom: 0.5rem;
+        line-height: 1.2;
     }
     
-    .article-meta {
+    .event-meta {
         display: flex;
-        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
         margin-bottom: 1.5rem;
         color: #666;
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
     
-    .article-image {
-        width: 100%;
-        max-height: 400px;
-        object-fit: cover;
-        border-radius: 8px;
+    .event-image-container {
         margin-bottom: 2rem;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
-    .article-content {
-        line-height: 1.7;
-        font-size: 1.1rem;
+    .event-image {
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+        display: block;
     }
     
-    .author-section {
-        margin-top: 3rem;
-        padding-top: 1rem;
-        border-top: 1px solid #eee;
+    /* Carte d'informations */
+    .event-details-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     
-    .author-list {
+    .detail-item {
         display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .detail-icon {
+        font-size: 1.2rem;
+        color: var(--zabantu-primary);
+        margin-right: 1rem;
+        width: 24px;
+        text-align: center;
+        padding-top: 3px;
+    }
+    
+    .detail-content {
+        flex: 1;
+    }
+    
+    .detail-title {
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        color: var(--zabantu-dark);
+    }
+    
+    /* Participants */
+    .participants-section {
+        margin-top: 1.5rem;
+    }
+    
+    .participants-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
         margin-top: 1rem;
     }
     
-    .author-card {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        padding: 0.8rem;
-        background: #f8f9fa;
+    .participant-card {
+        border: 1px solid #eee;
         border-radius: 8px;
+        padding: 1rem;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        background: white;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     
-    .author-avatar {
-        width: 40px;
-        height: 40px;
+    .participant-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .participant-photo {
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         object-fit: cover;
+        border: 2px solid #f0f0f0;
     }
     
-    .author-info {
-        font-size: 0.9rem;
+    .participant-info {
+        flex: 1;
     }
     
-    .author-name {
+    .participant-name {
         font-weight: 600;
+        margin-bottom: 0.2rem;
         color: var(--zabantu-primary);
     }
     
-    .author-title {
+    .participant-org {
+        font-size: 0.9rem;
         color: #666;
-        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .participant-bio {
+        font-size: 0.85rem;
+        color: #555;
+        line-height: 1.5;
+    }
+    
+    .participant-social {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .participant-social a {
+        color: #666;
+        transition: color 0.3s ease;
+    }
+    
+    .participant-social a:hover {
+        color: var(--zabantu-primary);
+    }
+    
+    /* Carte */
+    .map-container {
+        height: 400px;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 3rem 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 1px solid #eee;
+    }
+    
+    /* Événements similaires */
+    .similar-events {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid #eee;
+    }
+    
+    .similar-event-card {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .similar-event-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    
+    .similar-event-image {
+        height: 160px;
+        object-fit: cover;
+        width: 100%;
+    }
+    
+    .similar-event-body {
+        padding: 1.25rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .similar-event-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: var(--zabantu-dark);
+    }
+    
+    .similar-event-meta {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 1rem;
+    }
+    
+    /* Badges */
+    .badge-event {
+        background-color: var(--zabantu-primary);
+        color: white;
+    }
+    
+    .badge-past {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .badge-upcoming {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .event-title {
+            font-size: 1.8rem;
+        }
+        
+        .participants-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .map-container {
+            height: 300px;
+        }
     }
 </style>
+{% endblock %}
 
-<div class="article-container">
-    <header class="article-header">
-        <h1 class="article-title">{{ article.title }}</h1>
+{% block content %}
+<div class="event-container">
+    <!-- En-tête de l'événement -->
+    <header class="event-header">
+        <h1 class="event-title">{{ event.title }}</h1>
         
-        <div class="article-meta">
-            <span class="badge bg-primary">{{ article.get_category_display }}</span>
-            <span>{{ article.created_at|date:"d F Y" }}</span>
+        <div class="event-meta">
+            <span class="badge {% if is_past_event %}badge-past{% else %}badge-upcoming{% endif %}">
+                {% if is_past_event %}Événement passé{% else %}Événement à venir{% endif %}
+            </span>
+            <span class="badge badge-event">{{ event.get_event_type_display }}</span>
+            <span><i class="far fa-calendar-alt me-1"></i> {{ event.date|date:"d F Y à H:i" }}</span>
+            {% if event.end_date %}
+            <span><i class="fas fa-flag-checkered me-1"></i> {{ event.end_date|date:"d F Y à H:i" }}</span>
+            {% endif %}
         </div>
         
-        {% if article.cover_image %}
-        <img src="{{ article.cover_image.url }}" 
-             class="article-image" 
-             alt="{{ article.title }}">
+        {% if event.image %}
+        <div class="event-image-container">
+            <img src="{{ event.image.url }}" 
+                 class="event-image" 
+                 alt="{{ event.title }}">
+        </div>
         {% endif %}
     </header>
     
-    <div class="article-content">
-        {{ article.content|safe }}
+    <!-- Carte d'informations -->
+    <div class="event-details-card">
+        <!-- Lieu -->
+        <div class="detail-item">
+            <div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div class="detail-content">
+                <h5 class="detail-title">Lieu</h5>
+                <p>{{ event.location }}</p>
+                {% if event.lieu_gps %}
+                <a href="{{ event.lieu_gps }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+                    <i class="fas fa-directions me-1"></i> Voir sur la carte
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Date et heure -->
+        <div class="detail-item">
+            <div class="detail-icon"><i class="far fa-clock"></i></div>
+            <div class="detail-content">
+                <h5 class="detail-title">Date et heure</h5>
+                <p>{{ event.get_event_duration }}</p>
+            </div>
+        </div>
+        
+        <!-- Organisateurs -->
+        <div class="detail-item">
+            <div class="detail-icon"><i class="fas fa-users"></i></div>
+            <div class="detail-content">
+                <h5 class="detail-title">Organisation</h5>
+                <p>Événement organisé par Zabantu</p>
+                
+                <!-- Modérateurs -->
+                {% if organizers.moderators.exists %}
+                <div class="participants-section">
+                    <h6>Modérateurs :</h6>
+                    <div class="participants-grid">
+                        {% for mod in organizers.moderators %}
+                        <div class="participant-card">
+                            {% if mod.photo %}
+                            <img src="{{ mod.photo.url }}" class="participant-photo" alt="{{ mod.full_name }}">
+                            {% else %}
+                            <div class="participant-photo bg-light d-flex align-items-center justify-content-center">
+                                <i class="fas fa-user text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div class="participant-info">
+                                <h6 class="participant-name">{{ mod.first_name }} {{ mod.last_name }}</h6>
+                                {% if mod.organization %}<p class="participant-org">{{ mod.organization }}</p>{% endif %}
+                                {% if mod.bio %}<p class="participant-bio">{{ mod.bio|truncatewords:20 }}</p>{% endif %}
+                                {% if mod.linkedin or mod.twitter %}
+                                <div class="participant-social">
+                                    {% if mod.linkedin %}
+                                    <a href="{{ mod.linkedin }}" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                                    {% endif %}
+                                    {% if mod.twitter %}
+                                    <a href="{{ mod.twitter }}" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Intervenants -->
+                {% if organizers.speakers.exists %}
+                <div class="participants-section">
+                    <h6>Intervenants :</h6>
+                    <div class="participants-grid">
+                        {% for speaker in organizers.speakers %}
+                        <div class="participant-card">
+                            {% if speaker.photo %}
+                            <img src="{{ speaker.photo.url }}" class="participant-photo" alt="{{ speaker.full_name }}">
+                            {% else %}
+                            <div class="participant-photo bg-light d-flex align-items-center justify-content-center">
+                                <i class="fas fa-user text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div class="participant-info">
+                                <h6 class="participant-name">{{ speaker.first_name }} {{ speaker.last_name }}</h6>
+                                {% if speaker.organization %}<p class="participant-org">{{ speaker.organization }}</p>{% endif %}
+                                {% if speaker.bio %}<p class="participant-bio">{{ speaker.bio|truncatewords:20 }}</p>{% endif %}
+                                {% if speaker.linkedin or speaker.twitter %}
+                                <div class="participant-social">
+                                    {% if speaker.linkedin %}
+                                    <a href="{{ speaker.linkedin }}" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                                    {% endif %}
+                                    {% if speaker.twitter %}
+                                    <a href="{{ speaker.twitter }}" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Formateurs (si formation) -->
+                {% if event.event_type == 'formation' and organizers.trainers.exists %}
+                <div class="participants-section">
+                    <h6>Formateurs :</h6>
+                    <div class="participants-grid">
+                        {% for trainer in organizers.trainers %}
+                        <div class="participant-card">
+                            {% if trainer.photo %}
+                            <img src="{{ trainer.photo.url }}" class="participant-photo" alt="{{ trainer.full_name }}">
+                            {% else %}
+                            <div class="participant-photo bg-light d-flex align-items-center justify-content-center">
+                                <i class="fas fa-user text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div class="participant-info">
+                                <h6 class="participant-name">{{ trainer.first_name }} {{ trainer.last_name }}</h6>
+                                {% if trainer.organization %}<p class="participant-org">{{ trainer.organization }}</p>{% endif %}
+                                {% if trainer.bio %}<p class="participant-bio">{{ trainer.bio|truncatewords:20 }}</p>{% endif %}
+                                {% if trainer.linkedin or trainer.twitter %}
+                                <div class="participant-social">
+                                    {% if trainer.linkedin %}
+                                    <a href="{{ trainer.linkedin }}" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                                    {% endif %}
+                                    {% if trainer.twitter %}
+                                    <a href="{{ trainer.twitter }}" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
     
-    <div class="author-section">
-        <h4>Auteurs</h4>
-        <div class="author-list">
-            {% for author in article.authors.all %}
-            <div class="author-card">
-                {% if author.profile_picture %}
-                <img src="{{ author.profile_picture.url }}" class="author-avatar" alt="{{ author.get_full_name }}">
-                {% else %}
-                <img src="/static/profiles/default.png" class="author-avatar" alt="{{ author.get_full_name }}">
-                {% endif %}
-                <div class="author-info">
-                    <div class="author-name">{{ author.get_full_name }}</div>
-                    {% if author.job_title or author.department %}
-                    <div class="author-title">
-                        {{ author.job_title }}{% if author.job_title and author.department %}, {% endif %}{{ author.department }}
+    <!-- Contenu de l'événement -->
+    <div class="event-content mb-5">
+        {{ event.content|linebreaks }}
+    </div>
+    
+    <!-- Carte Google Maps -->
+    {% if event.lieu_gps %}
+    <div class="map-container">
+        <iframe src="{{ event.lieu_gps|safe }}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+    {% endif %}
+    
+    <!-- Événements similaires -->
+    {% if similar_events %}
+    <div class="similar-events">
+        <h3 class="mb-4">Autres événements similaires</h3>
+        <div class="row">
+            {% for similar in similar_events %}
+            <div class="col-md-4 mb-4">
+                <a href="{% url 'public_event_detail' similar.pk %}" class="text-decoration-none">
+                    <div class="similar-event-card">
+                        {% if similar.image %}
+                        <img src="{{ similar.image.url }}" class="similar-event-image" alt="{{ similar.title }}">
+                        {% else %}
+                        <div class="similar-event-image bg-light d-flex align-items-center justify-content-center">
+                            <i class="fas fa-calendar-alt fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+                        <div class="similar-event-body">
+                            <h5 class="similar-event-title">{{ similar.title|truncatechars:50 }}</h5>
+                            <div class="similar-event-meta">
+                                <div><i class="far fa-calendar-alt me-1"></i> {{ similar.date|date:"d M Y" }}</div>
+                                <div><i class="fas fa-map-marker-alt me-1"></i> {{ similar.location|truncatechars:30 }}</div>
+                            </div>
+                            <div class="mt-auto">
+                                <span class="badge badge-event">{{ similar.get_event_type_display }}</span>
+                            </div>
+                        </div>
                     </div>
-                    {% endif %}
-                </div>
+                </a>
             </div>
             {% endfor %}
         </div>
     </div>
-    
-    <a href="{% url 'home' %}" class="d-block mt-4">
-        &larr; Retour aux publications
-    </a>
+    {% endif %}
 </div>
 {% endblock %}

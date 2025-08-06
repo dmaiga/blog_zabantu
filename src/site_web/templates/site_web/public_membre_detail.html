@@ -1,0 +1,103 @@
+{% extends 'base_public.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Colonne de gauche - Profil -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    {% if membre.profile_picture %}
+                    <img src="{{ membre.profile_picture.url }}" class="rounded-circle mb-3" style="width: 200px; height: 200px; object-fit: cover;" alt="{{ membre.prenom }} {{ membre.nom }}">
+                    {% else %}
+                    <img src="{% static 'profiles/default.png' %}" class="rounded-circle mb-3" style="width: 200px; height: 200px; object-fit: cover;" alt="Photo par défaut">
+                    {% endif %}
+                    
+                    <h2>{{ membre.prenom }} {{ membre.nom }}</h2>
+                    <h5 class="text-muted">{{ membre.job_title }}</h5>
+                    <p class="text-muted">{{ membre.department }}</p>
+                    
+                    <div class="d-flex justify-content-center gap-3 mb-3">
+                        {% if membre.social_linkedin %}
+                        <a href="{{ membre.social_linkedin }}" target="_blank" class="btn btn-outline-primary">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        {% endif %}
+                        {% if membre.social_twitter %}
+                        <a href="{{ membre.social_twitter }}" target="_blank" class="btn btn-outline-info">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        {% endif %}
+                        {% if membre.social_facebook %}
+                        <a href="{{ membre.social_facebook }}" target="_blank" class="btn btn-outline-secondary">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="text-start">
+                        <h5 class="mb-3">Informations</h5>
+                        <p><strong>Email :</strong> <a href="mailto:{{ membre.email }}">{{ membre.email }}</a></p>
+                        {% if membre.phone_number %}
+                        <p><strong>Téléphone :</strong> {{ membre.phone_number }}</p>
+                        {% endif %}
+                        <p><strong>Membre depuis :</strong> {{ membre.date_started|date:"F Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Colonne de droite - Publications -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="mb-4">Biographie</h3>
+                    <p>{{ membre.bio|linebreaks }}</p>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="mb-0">Publications</h3>
+                        <span class="badge bg-primary rounded-pill">{{ publications.count }}</span>
+                    </div>
+                    
+                    {% if publications %}
+                    <div class="list-group">
+                        {% for publication in publications %}
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ publication.title }}</h5>
+                                <small class="text-muted">{{ publication.publish_at|date:"Y" }}</small>
+                            </div>
+                            <p class="mb-1">{{ publication.subtitle }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ publication.get_category_display }}</small>
+                                <div>
+                                    {% if publication.pdf_file %}
+                                    <a href="{{ publication.pdf_file.url }}" class="btn btn-sm btn-outline-primary me-2" target="_blank">
+                                        <i class="fas fa-file-pdf"></i> PDF
+                                    </a>
+                                    {% endif %}
+                                    <a href="{% url 'article_detail' publication.slug %}" class="btn btn-sm btn-primary">
+                                        Voir les détails
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Ce membre n'a pas encore de publications.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
