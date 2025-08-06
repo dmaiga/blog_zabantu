@@ -1,9 +1,21 @@
 zan_env/
 .env
-**/__pycache__/
+
+# Python
+*.pyc
 __pycache__/
-*.py[cod]
 *.pyo
-*.log
+
+# Environnement
+.env
 *.sqlite3
 
+# Django
+/staticfiles/
+media/
+
+# VS Code
+.vscode/
+
+# Autres
+.DS_Store
