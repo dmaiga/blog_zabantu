@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ gallery.title }} | {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .gallery-detail-container {
+        padding-bottom: 3rem;
+    }
+    
+    .gallery-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+        border-radius: 12px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .gallery-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--zabantu-primary), var(--zabantu-primary-dark));
+    }
+    
+    .gallery-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--zabantu-primary-dark);
+    }
+    
+    .gallery-description {
+        font-size: 1.1rem;
+        color: var(--zabantu-gray-dark);
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+    
+    .gallery-actions {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .photo-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .photo-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+    }
+    
+    .photo-img-container {
+        height: 220px;
+        overflow: hidden;
+        position: relative;
+        background: #f8f9fa;
+    }
+    
+    .photo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .photo-card:hover .photo-img {
+        transform: scale(1.05);
+    }
+    
+    .photo-info {
+        padding: 1.5rem;
+        flex-grow: 1;
+    }
+    
+    .photo-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--zabantu-primary-dark);
+    }
+    
+    .photo-caption {
+        color: var(--zabantu-gray-dark);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .view-btn {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        background: var(--zabantu-light);
+        color: var(--zabantu-primary-dark);
+        border-radius: 6px;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+    }
+    
+    .view-btn:hover {
+        background: var(--zabantu-primary);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px;
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        color: var(--zabantu-gray-light);
+        margin-bottom: 1.5rem;
+        opacity: 0.7;
+    }
+    
+    .pagination {
+        margin-top: 3rem;
+    }
+    
+    .page-item.active .page-link {
+        background-color: var(--zabantu-primary);
+        border-color: var(--zabantu-primary);
+    }
+    
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 3rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--zabantu-light);
+        color: var(--zabantu-primary-dark);
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    
+    .back-link:hover {
+        background: var(--zabantu-primary);
+        color: white;
+        text-decoration: none;
+        transform: translateX(-3px);
+    }
+    
+    @media (max-width: 768px) {
+        .gallery-title {
+            font-size: 2rem;
+        }
+        
+        .gallery-header {
+            padding: 3rem 1rem;
+        }
+        
+        .photo-img-container {
+            height: 180px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .gallery-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .empty-state {
+            padding: 2.5rem 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="gallery-detail-container">
+    <div class="container">
+        {% include 'includes/messages.html' %}
+
+        <div class="gallery-header">
+            <div class="container">
+                <h1 class="gallery-title">{{ gallery.title }}</h1>
+                {% if gallery.description %}
+                <p class="gallery-description">{{ gallery.description }}</p>
+                {% endif %}
+                
+                <div class="gallery-actions">
+                    {% if request.user == gallery.created_by or request.user.is_superuser %}
+                    <a href="{% url 'gallery_update' gallery.slug %}" 
+                       class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-edit me-2"></i> Modifier
+                    </a>
+                    <a href="{% url 'gallery_delete' gallery.slug %}" 
+                       class="btn btn-outline-danger btn-lg">
+                        <i class="fas fa-trash me-2"></i> Supprimer
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'photo_create' %}?gallery={{ gallery.id }}" 
+                       class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus me-2"></i> Ajouter des photos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="photo-grid">
+            {% for photo in photos %}
+            <a href="{% url 'photo_detail' photo.pk %}" class="photo-card text-decoration-none">
+                <div class="photo-img-container">
+                    <img src="{{ photo.image.url }}" 
+                         alt="{{ photo.title|default:'Photo sans titre' }}" 
+                         class="photo-img"
+                         loading="lazy"
+                         width="280"
+                         height="220">
+                </div>
+                <div class="photo-info">
+                    <h3 class="photo-title">{{ photo.title|default:"Sans titre" }}</h3>
+                    {% if photo.caption %}
+                    <p class="photo-caption">{{ photo.caption }}</p>
+                    {% endif %}
+                    <span class="view-btn">
+                        Voir <i class="fas fa-arrow-right ms-2"></i>
+                    </span>
+                </div>
+            </a>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-images"></i>
+                </div>
+                <h3>Cette galerie est vide</h3>
+                <p class="text-muted mb-4">Ajoutez votre première photo pour commencer</p>
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'photo_create' %}?gallery={{ gallery.id }}" 
+                   class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-2"></i> Ajouter une photo
+                </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if photos.has_other_pages %}
+        <nav aria-label="Navigation des photos">
+            <ul class="pagination justify-content-center">
+                {% if photos.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ photos.previous_page_number }}" 
+                       aria-label="Précédent">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for i in photos.paginator.page_range %}
+                    {% if photos.number == i %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ i }}</span>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if photos.has_next %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ photos.next_page_number }}" 
+                       aria-label="Suivant">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        <div class="text-center">
+            <a href="{% url 'gallery_list' %}" class="back-link">
+                <i class="fas fa-arrow-left me-2"></i> Retour aux galeries
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

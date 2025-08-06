@@ -1,52 +1,220 @@
 {% extends "base_public.html" %}
 
-{% block title %}{{ guelekan.title }} | {{ block.super }}{% endblock %}
+{% block title %}Séminaires Gɛlɛkan | {{ block.super }}{% endblock %}
+
+{% block banner_title %}Séminaires Gɛlɛkan{% endblock %}
+{% block banner_subtitle %}Retrouvez tous nos séminaires de recherche{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <article>
-                <header class="mb-4">
-                    <h1>{{ guelekan.title }}</h1>
-                    {% if guelekan.subtitle %}
-                    <h2 class="h4 text-muted">{{ guelekan.subtitle }}</h2>
-                    {% endif %}
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <small class="text-muted">
-                            Publié le {{ guelekan.publish_at|date:"d F Y" }}
-                        </small>
-                    </div>
-                </header>
-                
-                {% if guelekan.cover_image %}
-                <figure class="figure mb-4">
-                    <img src="{{ guelekan.cover_image.url }}" 
-                         class="figure-img img-fluid rounded" 
-                         alt="{{ guelekan.title }}">
-                </figure>
-                {% endif %}
-                
-                <div class="article-content mb-5">
-                    {{ guelekan.content|safe }}
-                </div>
-                
-                {% if guelekan.pdf_file %}
-                <div class="mb-5">
-                    <a href="{{ guelekan.pdf_file.url }}" class="btn btn-primary" target="_blank">
-                        <i class="fas fa-file-pdf"></i> Télécharger le PDF
-                    </a>
-                </div>
-                {% endif %}
-                
-                <footer>
-                    <a href="{% url 'public_guelekan_list' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left"></i> Retour à la liste
-                    </a>
-                </footer>
-            </article>
+<style>
+    .guelekan-detail {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+    
+    .guelekan-header {
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+    
+    .guelekan-title {
+        color: var(--zabantu-primary-dark);
+        font-size: 2.2rem;
+        line-height: 1.3;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .guelekan-subtitle {
+        color: var(--zabantu-gray);
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        font-weight: 400;
+    }
+    
+    .guelekan-meta {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        color: var(--zabantu-gray);
+        font-size: 0.95rem;
+    }
+    
+    .guelekan-date {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .guelekan-image-container {
+        margin: 2.5rem 0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        position: relative;
+    }
+    
+    .guelekan-image {
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+        display: block;
+    }
+    
+    .guelekan-content {
+        line-height: 1.8;
+        font-size: 1.1rem;
+        color: var(--zabantu-dark);
+        margin-bottom: 3rem;
+    }
+    
+    .guelekan-content p {
+        margin-bottom: 1.5rem;
+    }
+    
+    .guelekan-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+        margin: 1.5rem auto;
+        display: block;
+    }
+    
+    .guelekan-content h2, 
+    .guelekan-content h3 {
+        color: var(--zabantu-primary);
+        margin: 2.5rem 0 1.5rem;
+        font-weight: 600;
+    }
+    
+    .pdf-download {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.8rem 1.5rem;
+        background-color: var(--zabantu-primary);
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+        margin-bottom: 3rem;
+    }
+    
+    .pdf-download:hover {
+        background-color: var(--zabantu-primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(var(--zabantu-primary-rgb), 0.2);
+    }
+    
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.5rem;
+        border: 1px solid var(--zabantu-light);
+        border-radius: 6px;
+        color: var(--zabantu-primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    
+    .back-link:hover {
+        background-color: var(--zabantu-light);
+        color: var(--zabantu-primary-dark);
+    }
+    
+    @media (max-width: 768px) {
+        .guelekan-detail {
+            padding: 0 1rem;
+        }
+        
+        .guelekan-title {
+            font-size: 1.8rem;
+        }
+        
+        .guelekan-subtitle {
+            font-size: 1.1rem;
+        }
+        
+        .guelekan-meta {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    }
+</style>
+
+<div class="guelekan-detail">
+    <header class="guelekan-header">
+        <h1 class="guelekan-title">{{ guelekan.title }}</h1>
+        
+        {% if guelekan.subtitle %}
+        <h2 class="guelekan-subtitle">{{ guelekan.subtitle }}</h2>
+        {% endif %}
+        
+        <div class="guelekan-meta">
+            <span class="guelekan-date">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 4H5C3.895 4 3 4.895 3 6V20C3 21.105 3.895 22 5 22H19C20.105 22 21 21.105 21 20V6C21 4.895 20.105 4 19 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Publié le {{ guelekan.publish_at|date:"d F Y" }}
+            </span>
+            
+            {% if guelekan.location %}
+            <span class="guelekan-location">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.613 3.948 5.323 5.636 3.636C7.324 1.948 9.614 1 12 1C14.386 1 16.676 1.948 18.364 3.636C20.052 5.323 21 7.613 21 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 13C13.657 13 15 11.657 15 10C15 8.343 13.657 7 12 7C10.343 7 9 8.343 9 10C9 11.657 10.343 13 12 13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {{ guelekan.location }}
+            </span>
+            {% endif %}
         </div>
+        
+        {% if guelekan.cover_image %}
+        <div class="guelekan-image-container">
+            <img src="{{ guelekan.cover_image.url }}" 
+                 class="guelekan-image" 
+                 alt="{{ guelekan.title }}"
+                 loading="lazy">
+        </div>
+        {% endif %}
+    </header>
+    
+    <div class="guelekan-content">
+        {{ guelekan.content|safe }}
     </div>
+    
+    {% if guelekan.pdf_file %}
+    <div>
+        <a href="{{ guelekan.pdf_file.url }}" class="pdf-download" target="_blank">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 9H9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Télécharger le PDF complet
+        </a>
+    </div>
+    {% endif %}
+    
+    <footer>
+        <a href="{% url 'public_guelekan_list' %}" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Retour aux séminaires Gɛlɛkan
+        </a>
+    </footer>
 </div>
 {% endblock %}

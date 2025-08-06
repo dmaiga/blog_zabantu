@@ -1,71 +1,195 @@
 {% extends 'base_public.html' %}
 
 {% block title %}{{ article.title }} | Zabantu{% endblock %}
-
+{% block banner_title %}Groupe de recherche Zabantu {% endblock %}
+{% block banner_subtitle %}{% endblock %}
 {% block content %}
 <style>
-    .article-container {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 0 1rem;
+    .article-detail {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
     }
     
     .article-header {
-        margin-bottom: 2rem;
+        margin-bottom: 3rem;
+        text-align: center;
     }
     
     .article-title {
-        color: var(--zabantu-primary);
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
+        color: var(--zabantu-primary-dark);
+        font-size: 2.2rem;
+        line-height: 1.3;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .article-subtitle {
+        color: var(--zabantu-gray);
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        font-weight: 400;
     }
     
     .article-meta {
         display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
         gap: 1rem;
-        margin-bottom: 1.5rem;
-        color: #666;
-        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        color: var(--zabantu-gray);
+    }
+    
+    .article-category {
+        background-color: var(--zabantu-primary-light);
+        color: var(--zabantu-primary-dark);
+        padding: 0.35rem 1rem;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+    
+    .article-date {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .article-image-container {
+        margin: 2rem 0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
     .article-image {
         width: 100%;
         max-height: 400px;
         object-fit: cover;
-        border-radius: 8px;
-        margin-bottom: 2rem;
+        display: block;
     }
     
     .article-content {
-        line-height: 1.7;
+        line-height: 1.8;
         font-size: 1.1rem;
+        color: var(--zabantu-dark);
     }
     
-    .author-minimal {
-        margin-top: 3rem;
-        padding-top: 1rem;
-        border-top: 1px solid #eee;
-        font-size: 0.9rem;
+    .article-content p {
+        margin-bottom: 1.5rem;
     }
     
-    .author-link {
+    .article-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+        margin: 1.5rem auto;
+        display: block;
+    }
+    
+    .article-content h2, 
+    .article-content h3 {
         color: var(--zabantu-primary);
+        margin: 2rem 0 1rem;
+    }
+    
+    .article-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--zabantu-light);
+    }
+    
+    .authors-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .author-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: var(--zabantu-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--zabantu-primary);
+        font-weight: bold;
+    }
+    
+    .author-info {
+        font-size: 0.95rem;
+    }
+    
+    .author-name {
+        font-weight: 600;
+        color: var(--zabantu-primary-dark);
+        margin-bottom: 0.2rem;
+    }
+    
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--zabantu-primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    
+    .back-link:hover {
+        color: var(--zabantu-primary-dark);
+    }
+    
+    @media (max-width: 768px) {
+        .article-detail {
+            padding: 0 1rem;
+        }
+        
+        .article-title {
+            font-size: 1.8rem;
+        }
+        
+        .article-subtitle {
+            font-size: 1.1rem;
+        }
     }
 </style>
 
-<div class="article-container">
+<div class="article-detail">
     <header class="article-header">
         <h1 class="article-title">{{ article.title }}</h1>
         
+        {% if article.subtitle %}
+        <div class="article-subtitle">{{ article.subtitle }}</div>
+        {% endif %}
+        
         <div class="article-meta">
-            <span class="badge bg-primary">{{ article.get_category_display }}</span>
-            <span>{{ article.created_at|date:"d F Y" }}</span>
+            <span class="article-category">{{ article.get_category_display }}</span>
+            <span class="article-date">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 4H5C3.895 4 3 4.895 3 6V20C3 21.105 3.895 22 5 22H19C20.105 22 21 21.105 21 20V6C21 4.895 20.105 4 19 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {{ article.created_at|date:"d F Y" }}
+            </span>
         </div>
         
         {% if article.cover_image %}
-        <img src="{{ article.cover_image.url }}" 
-             class="article-image" 
-             alt="{{ article.title }}">
+        <div class="article-image-container">
+            <img src="{{ article.cover_image.url }}" 
+                 class="article-image" 
+                 alt="{{ article.title }}"
+                 loading="lazy">
+        </div>
         {% endif %}
     </header>
     
@@ -73,13 +197,33 @@
         {{ article.content|safe }}
     </div>
     
-  {% for author in authors %}
-    <p>Auteur : {{ author.nom }} {{ author.prenom }}</p>
-{% endfor %}
-
+    {% if authors %}
+    <footer class="article-footer">
+        <h3>Auteurs</h3>
+        <div class="authors-section">
+            {% for author in authors %}
+            <div class="author-card">
+                <div class="author-avatar">
+                    {{ author.prenom|first|upper }}{{ author.nom|first|upper }}
+                </div>
+                <div class="author-info">
+                    <div class="author-name">{{ author.prenom }} {{ author.nom }}</div>
+                    {% if author.position %}
+                    <div class="author-position">{{ author.position }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </footer>
+    {% endif %}
     
-    <a href="{% url 'home' %}" class="d-block mt-4">
-        &larr; Retour aux publications
+    <a href="{% url 'public_article_list' %}" class="back-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Retour aux publications
     </a>
 </div>
 {% endblock %}

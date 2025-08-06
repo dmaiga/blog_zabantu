@@ -24,11 +24,16 @@
 <style>
     .publication-container {
         display: flex;
-        gap: 2rem;
+        gap: 3rem;
+        margin-top: 2rem;
     }
     .filter-sidebar {
-        width: 250px;
+        width: 280px;
         flex-shrink: 0;
+        position: sticky;
+        top: 20px;
+        align-self: flex-start;
+        height: fit-content;
     }
     .articles-list {
         flex: 1;
@@ -36,35 +41,160 @@
     .filter-title {
         font-weight: 600;
         color: var(--zabantu-primary);
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 1.25rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--zabantu-light);
     }
     .filter-list {
         list-style: none;
         padding: 0;
+        margin: 0;
     }
     .filter-item {
         margin-bottom: 0.5rem;
     }
     .filter-link {
-        display: block;
-        padding: 0.5rem 1rem;
-        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1.25rem;
+        color: var(--zabantu-dark);
         text-decoration: none;
-        border-radius: 4px;
-        transition: all 0.3s;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        background-color: rgba(255, 255, 255, 0.8);
     }
-    .filter-link:hover, .filter-link.active {
+    .filter-link:hover {
         background-color: var(--zabantu-light);
         color: var(--zabantu-primary);
     }
     .filter-link.active {
+        background-color: var(--zabantu-primary-light);
+        color: var(--zabantu-primary-dark);
         font-weight: 600;
-        border-left: 3px solid var(--zabantu-primary);
+        border-left: 4px solid var(--zabantu-primary);
+    }
+    .badge-count {
+        background-color: var(--zabantu-secondary-light);
+        color: var(--zabantu-secondary-dark);
+        border-radius: 12px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
     }
     .article-card {
-        margin-bottom: 2rem;
-        border-left: 3px solid var(--zabantu-secondary);
-        padding-left: 1rem;
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .article-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .article-image {
+        height: 100%;
+        min-height: 200px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+    .article-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+    }
+    .article-content {
+        padding: 1.5rem 1.5rem 1.5rem 0;
+    }
+    .article-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1.3;
+        margin-bottom: 0.75rem;
+        color: var(--zabantu-primary-dark);
+    }
+    .article-title a {
+        text-decoration: none;
+        color: inherit;
+        transition: color 0.2s;
+    }
+    .article-title a:hover {
+        color: var(--zabantu-secondary);
+    }
+    .article-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+    .article-category {
+        background-color: var(--zabantu-primary-light);
+        color: var(--zabantu-primary-dark);
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    .article-date {
+        color: var(--zabantu-gray);
+        font-size: 0.9rem;
+    }
+    .article-excerpt {
+        color: var(--zabantu-dark);
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+    .read-more {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background-color: var(--zabantu-primary);
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .read-more:hover {
+        background-color: var(--zabantu-primary-dark);
+    }
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .empty-state-icon {
+        font-size: 3rem;
+        color: var(--zabantu-light);
+        margin-bottom: 1rem;
+    }
+    .empty-state-title {
+        color: var(--zabantu-primary);
+        margin-bottom: 0.5rem;
+    }
+    .empty-state-text {
+        color: var(--zabantu-gray);
+        margin-bottom: 1.5rem;
+    }
+    @media (max-width: 992px) {
+        .article-card {
+            grid-template-columns: 1fr 1fr;
+        }
     }
     @media (max-width: 768px) {
         .publication-container {
@@ -72,8 +202,17 @@
         }
         .filter-sidebar {
             width: 100%;
-            order: -1;
+            position: static;
             margin-bottom: 2rem;
+        }
+        .article-card {
+            grid-template-columns: 1fr;
+        }
+        .article-image {
+            min-height: 250px;
+        }
+        .article-content {
+            padding: 1.5rem;
         }
     }
 </style>
@@ -88,44 +227,26 @@
                     <a href="{% url 'public_article_list' %}" 
                        class="filter-link {% if not current_filter %}active{% endif %}">
                         Toutes les publications
-                        <span class="badge bg-secondary float-end">{{ articles.count }}</span>
+                        <span class="badge-count">{{ total_count }}</span>
                     </a>
                 </li>
                 <li class="filter-item">
-                    <a href="#" 
-                       class="filter-link {% if current_filter == 'seminaire' %}active{% endif %}">
-                        Articles
-                        <span class="badge bg-secondary float-end">{{ categories.seminaire }}</span>
+                    <a href="{% url 'public_guelekan_list' %}" 
+                       class="filter-link {% if current_filter == 'public_guelekan_list' %}active{% endif %}">
+                        Séminaire Gɛlɛkan
+                        <span class="badge-count">{{ guelekan_count }}</span>
                     </a>
                 </li>
-                <li class="filter-item">
-                    <a href="#" 
-                       class="filter-link {% if current_filter == 'seminaire' %}active{% endif %}">
-                        Ouvrages
-                        <span class="badge bg-secondary float-end">{{ categories.seminaire }}</span>
-                    </a>
-                </li>
-                 <li class="filter-item">
-                    <a href="#" 
-                       class="filter-link {% if current_filter == 'seminaire' %}active{% endif %}">
-                        Policy Briefs
-                        <span class="badge bg-secondary float-end">{{ categories.seminaire }}</span>
-                    </a>
-                </li>
-                <li class="filter-item">
-                    <a href="{% url 'public_article_list' %}?type=analyse" 
-                       class="filter-link {% if current_filter == 'analyse' %}active{% endif %}">
-                        Analyses
-                        <span class="badge bg-secondary float-end">{{ categories.analyse }}</span>
-                    </a>
-                </li>
-                <li class="filter-item">
-                    <a href="{% url 'public_article_list' %}?type=publication" 
-                       class="filter-link {% if current_filter == 'publication' %}active{% endif %}">
-                        Rapports
-                        <span class="badge bg-secondary float-end">{{ categories.publication }}</span>
-                    </a>
-                </li>
+
+                {% for key, label, count in category_data %}
+                    <li class="filter-item">
+                        <a href="{% url 'public_article_list' %}?type={{ key }}" 
+                           class="filter-link {% if current_filter == key %}active{% endif %}">
+                            {{ label }}
+                            <span class="badge-count">{{ count }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
             </ul>
         </div>
 
@@ -134,25 +255,46 @@
             {% if articles %}
                 {% for article in articles %}
                 <div class="article-card">
-                    <h3>
-                        <a href="{% url 'public_article_detail' article.slug %}" 
-                           style="color: var(--zabantu-primary); text-decoration: none;">
-                            {{ article.title }}
-                        </a>
-                    </h3>
-                    <div class="d-flex gap-2 mb-2">
-                        <span class="badge bg-primary">{{ article.get_category_display }}</span>
-                        <span class="text-muted">{{ article.created_at|date:"d F Y" }}</span>
+                    {% if article.cover_image %}
+                    <div class="article-image" style="background-image: url('{{ article.cover_image.url }}')"></div>
+                    {% else %}
+                    <div class="article-image" style="background-color: var(--zabantu-light); display: flex; align-items: center; justify-content: center;">
+                        <svg width="50%" height="50%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity: 0.3;">
+                            <path d="M4 16L8.586 11.414C8.961 11.039 9.47 10.828 10 10.828C10.53 10.828 11.039 11.039 11.414 11.414L16 16M14 14L15.586 12.414C15.961 12.039 16.47 11.828 17 11.828C17.53 11.828 18.039 12.039 18.414 12.414L20 14M14 8H14.01M6 20H18C19.105 20 20 19.105 20 18V6C20 4.895 19.105 4 18 4H6C4.895 4 4 4.895 4 6V18C4 19.105 4.895 20 6 20Z" stroke="var(--zabantu-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                     </div>
-                    <p>{{ article.content|striptags|truncatewords:30 }}</p>
-                    <a href="{% url 'public_article_detail' article.slug %}" class="btn btn-outline-primary btn-sm">
-                        Lire la suite
-                    </a>
+                    {% endif %}
+                    <div class="article-content">
+                        <h3 class="article-title">
+                            <a href="{% url 'public_article_detail' article.slug %}">
+                                {{ article.title }}
+                            </a>
+                        </h3>
+                        <div class="article-meta">
+                            <span class="article-category">{{ article.get_category_display }}</span>
+                            <span class="article-date">{{ article.created_at|date:"d F Y" }}</span>
+                        </div>
+                        <p class="article-excerpt">{{ article.content|striptags|truncatewords:30 }}</p>
+                        <a href="{% url 'public_article_detail' article.slug %}" class="read-more">
+                            Lire la suite
+                        </a>
+                    </div>
                 </div>
                 {% endfor %}
             {% else %}
-                <div class="alert alert-info">
-                    Aucun article disponible dans cette catégorie.
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <h3 class="empty-state-title">Aucun article trouvé</h3>
+                    <p class="empty-state-text">
+                        {% if search_query %}
+                            Aucun résultat pour "{{ search_query }}". Essayez avec d'autres termes.
+                        {% else %}
+                            Aucune publication disponible dans cette catégorie pour le moment.
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'public_article_list' %}" class="read-more">
+                        Voir toutes les publications
+                    </a>
                 </div>
             {% endif %}
         </div>

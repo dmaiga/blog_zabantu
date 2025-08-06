@@ -186,11 +186,11 @@
                   Publications
                 </a>
                 <ul class="dropdown-menu text-center">
-                  <li><a class="dropdown-item" href="#">Articles</a></li>
-                  <li><a class="dropdown-item" href="#">Ouvrages</a></li>
-                  <li><a class="dropdown-item" href="#">Policy Briefs</a></li>
+                  <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=article">Articles</a></li>
+                  <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=ouvrage">Ouvrages</a></li>
+                  <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=policy">Policy Briefs</a></li>
                   <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=analyse">Analyses</a></li>
-                  <li><a class="dropdown-item" href="#">Rapports</a></li>
+                  <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=rapport">Rapports</a></li>
                  
                
                 </ul>
@@ -203,7 +203,7 @@
               </li>
 
               <li class="nav-item">
-                <a class="nav-link" href="#">A propos</a>
+                <a class="nav-link" href="{%url 'about' %}">A propos</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Galerie</a>

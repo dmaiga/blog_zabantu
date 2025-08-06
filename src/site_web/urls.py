@@ -9,6 +9,7 @@ from .views import (
     public_member_detail,
     public_guelekan_list,
     public_guelekan_detail,
+    about_view,
 
 )
 
@@ -23,5 +24,6 @@ urlpatterns = [
     # Guelekan
     path('guelekans/', public_guelekan_list, name='public_guelekan_list'),
     path('guelekans/<slug:slug>/', public_guelekan_detail, name='public_guelekan_detail'),
-
+    #05_08
+    path('about/', about_view, name='about'),
 ]

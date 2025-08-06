@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{ form.instance.pk|yesno:"Modifier,Créer" }} une galerie{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h4 mb-0">
+                        <i class="fas fa-images me-2"></i>
+                        {{ form.instance.pk|yesno:"Modifier,Créer" }} une galerie
+                    </h2>
+                </div>
+                <div class="card-body">
+                    {% include 'includes/messages.html' %}
+
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                      {{ form.as_p }}
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% if form.instance.pk %}{% url 'gallery_detail' form.instance.slug %}{% else %}{% url 'gallery_list' %}{% endif %}" 
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Prévisualisation de l'image de couverture
+    document.getElementById('id_cover_image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('cover-preview').src = e.target.result;
+                document.getElementById('cover-preview').classList.remove('d-none');
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,418 @@
+{% extends 'base_public.html' %}
+{%load static %}
+
+{% block title %}À propos  | Zabantu{% endblock %}
+{% block banner_title %}Qui sommes nous{% endblock %}
+{% block banner_subtitle %}{% endblock %}
+{% block content %}
+<style>
+    .about-container {
+        max-width: 1200px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+    
+    .section {
+        margin-bottom: 4rem;
+    }
+    
+    .section-title {
+        color: var(--zabantu-primary-dark);
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--zabantu-light);
+    }
+    
+    .identity-card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        margin-bottom: 3rem;
+    }
+    
+    .group-name {
+        color: var(--zabantu-primary);
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .group-subtitle {
+        color: var(--zabantu-gray);
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+    }
+    
+    .vision-box {
+        background-color: var(--zabantu-primary-light);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 1.5rem 0;
+        border-left: 4px solid var(--zabantu-primary);
+    }
+    
+    .vision-title {
+        font-weight: 600;
+        color: var(--zabantu-primary-dark);
+        margin-bottom: 0.5rem;
+    }
+    
+    .research-domains {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .domain-badge {
+        background-color: var(--zabantu-secondary-light);
+        color: var(--zabantu-secondary-dark);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    /* Section Équipe */
+    .team-section {
+        padding: 5rem 2rem;
+        background: #f8fafc;
+    }
+    
+    .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        color: var(--zabantu-primary-dark);
+        margin-bottom: 3rem;
+        position: relative;
+    }
+    
+    .section-title:after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: var(--zabantu-primary);
+        margin: 1rem auto 0;
+    }
+    
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2.5rem;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+    
+    .member-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .member-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+    
+    .member-photo-container {
+        height: 280px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .member-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .member-card:hover .member-photo {
+        transform: scale(1.05);
+    }
+    
+    .member-info {
+        padding: 1.8rem;
+        position: relative;
+    }
+    
+    .member-name {
+        font-size: 1.5rem;
+        color: var(--zabantu-primary-dark);
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+    
+    .member-position {
+        color: var(--zabantu-primary);
+        font-weight: 600;
+        margin-bottom: 0.8rem;
+        font-size: 1.1rem;
+    }
+    
+    .member-department {
+        display: inline-block;
+        background: rgba(10, 60, 100, 0.1);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin-bottom: 1.2rem;
+        color: var(--zabantu-primary-dark);
+    }
+    
+    .member-bio {
+        color: #555;
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .member-expertise {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .expertise-tag {
+        background: var(--zabantu-light);
+        color: var(--zabantu-primary-dark);
+        padding: 0.4rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .member-social {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .social-link {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--zabantu-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--zabantu-primary-dark);
+        transition: all 0.3s ease;
+    }
+    
+    .social-link:hover {
+        background: var(--zabantu-primary);
+        color: white;
+        transform: translateY(-3px);
+    }
+    
+    /* Partners section */
+    .partners-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 2rem;
+        align-items: center;
+        margin-top: 2rem;
+    }
+    
+    .partner-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 150px;
+        padding: 1rem;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+    }
+    
+    .partner-item:hover {
+        transform: scale(1.05);
+    }
+    
+    .partner-logo {
+        max-width: 100%;
+        max-height: 100px;
+        object-fit: contain;
+       
+        
+        transition: all 0.3s ease;
+    }
+    
+   
+    
+    @media (max-width: 768px) {
+        .about-container {
+            padding: 0 1rem;
+        }
+        
+        .group-name {
+            font-size: 2rem;
+        }
+        
+        .team-grid {
+            grid-template-columns: 1fr;
+        }
+        .member-photo-container {
+            height: 220px;
+        }
+        
+        .partners-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+
+<div class="about-container">
+    <!-- Identity Section -->
+    <section class="section">
+        <h2 class="section-title">Identité</h2>
+        
+        <div class="identity-card">
+            <h1 class="group-name">Groupe de recherche Zabantu</h1>
+            <p class="group-subtitle">« Économie-Guerre-État »</p>
+            
+            <p>Nom inspiré d'une plante locale mandingue, Zabantu est un groupe de chercheurs en sciences sociales travaillant sur le développement économique et social. C'est de ce fait un groupe pluri et interdisciplinaire, qui est ouvert à tous les chercheurs et chercheuses du monde dans l'objectif d'avoir une recherche plus inclusive et plus ancrée.</p>
+            
+            <div class="vision-box">
+                <div class="vision-title">Vision</div>
+                <p>Vers une recherche ancrée dans les dynamiques économiques et sociales</p>
+            </div>
+            
+            <h3>Domaines de recherche</h3>
+            <div class="research-domains">
+                <span class="domain-badge">Économie politique</span>
+                <span class="domain-badge">Conflits et sécurité</span>
+                <span class="domain-badge">Développement social</span>
+                <span class="domain-badge">Politiques publiques</span>
+                <span class="domain-badge">Études africaines</span>
+            </div>
+        </div>
+        
+        <h3 class="section-title">Activités</h3>
+        
+        <h4>Séminaire Gɛlɛkan</h4>
+        <p>Gɛlɛkan est une tribune scientifique de collaboration et de partage d'expérience et de connaissance. Inspiré de la tribune de sagesse bamanan réservés aux ainés (considérés comme des sagesses et des érudits), Gɛlɛkan est un espace de communication scientifique permettant aux chercheurs de partager les résultats de leurs recherches accompli ou en cours.</p>
+        
+        <p>Les séminaires Gɛlɛkan portent aussi sur les thématiques de formation comme la méthodologie de recherche et les astuces de publications académiques. Il s'agit de partage d'expérience des auteurs bien établis dans leurs domaines visant à initier et ou renforcer les jeunes chercheurs à la conduite de la recherche scientifique et de la communication scientifique.</p>
+        
+        <p>Au-delà de la démarche méthodologique, les séminaires Gɛlɛkan mettent un accent particulier sur les débats épistémologiques, qui déterminent, dans une large mesure, la contribution à la connaissance scientifique.</p>
+        
+        <p>La nécessité d'un tel cadre académique réside dans le caractère collectif de la production de la connaissance. Ainsi, débattre des résultats de recherche permettent de mettre en évidence leurs pertinence et limites éventuelles et par conséquent de les consolider, dans la mesure où ces limites seront adressées par la communauté scientifique. Dans ce contexte, la communication des résultats de recherche devient plus qu'une nécessité. Elle contribue à la validation externe des connaissances et leur diffusion.</p>
+        
+        <p>Séminaires mensuels...</p>
+    </section>
+    
+   
+
+<!-- Section Équipe -->
+<section class="team-section">
+    <h2 class="section-title">Notre Équipe de Recherche</h2>
+    
+    <div class="team-grid">
+        {% for member in active_members %}
+        <div class="member-card">
+            <div class="member-photo-container">
+                <img src="{% if member.profile_picture %}{{ MEDIA_URL }}{{ member.profile_picture }}{% else %}{% static 'profiles/default.png' %}{% endif %}" 
+                     alt="{{ member.full_name }}" 
+                     class="member-photo">
+            </div>
+            
+            <div class="member-info">
+                <h3 class="member-name">{{ member.full_name }}</h3>
+                <p class="member-position">{{ member.job_title }}</p>
+                
+                {% if member.department %}
+                <span class="member-department">{{ member.department }}</span>
+                {% endif %}
+                
+                {% if member.bio %}
+                <p class="member-bio">{{ member.bio|truncatewords:20 }}</p>
+                {% endif %}
+                
+                {% if member.expertise %}
+                <div class="member-expertise">
+                    {% for expertise in member.expertise %}
+                    <span class="expertise-tag">{{ expertise }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="member-social">
+                    {% if member.social_links.linkedin %}
+                    <a href="{{ member.social_links.linkedin }}" target="_blank" class="social-link" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    {% endif %}
+                    
+                    {% if member.social_links.twitter %}
+                    <a href="{{ member.social_links.twitter }}" target="_blank" class="social-link" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    {% endif %}
+                    
+                    {% if member.social_links.facebook %}
+                    <a href="{{ member.social_links.facebook }}" target="_blank" class="social-link" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+    
+    <!-- Partners Section -->
+    <section class="section">
+        <h2 class="section-title">Partenaires</h2>
+        
+        <div class="partners-grid">
+            <div class="partner-item">
+                <img src="{% static 'users/images/partenaires/iufp_segou.png' %}" 
+                     alt="Université de Ségou" 
+                     class="partner-logo">
+            </div>
+            
+            <div class="partner-item">
+                <img src="{% static 'users/images/partenaires/ghana.svg' %}" 
+                     alt="Université de Ghana" 
+                     class="partner-logo">
+            </div>
+            
+            <div class="partner-item">
+                <img src="{% static 'users/images/partenaires/uni_ao.webp' %}" 
+                     alt="Université Alassane Ouattara de Bouaké" 
+                     class="partner-logo">
+            </div>
+            
+            <div class="partner-item">
+                <img src="{% static 'users/images/partenaires/uni_mons.svg' %}" 
+                     alt="Université de Mons" 
+                     class="partner-logo">
+            </div>
+            
+            <div class="partner-item">
+                <img src="{% static 'users/images/partenaires/ulb.svg' %}" 
+                     alt="Université Libre de Bruxelles" 
+                     class="partner-logo">
+            </div>
+            
+            <div class="partner-item">
+                <img src="{% static 'users/images/partenaires/apna_logo.png' %}" 
+                     alt="Association pour la Promotion du Numérique en Afrique" 
+                     class="partner-logo">
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
