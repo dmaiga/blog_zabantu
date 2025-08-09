@@ -17,6 +17,7 @@ from .views import (
     contact,
     membre_liste,
     membre_detail,
+   
 
 )
 
@@ -44,4 +45,6 @@ urlpatterns = [
     path('galerie/<slug:slug>/', detail_galerie, name='detail_galerie'),
     path('photos/', toutes_photos, name='toutes_photos'),
     path('photo/<int:pk>/', detail_photo, name='detail_photo'),
+   
+    
 ]

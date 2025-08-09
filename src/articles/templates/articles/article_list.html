@@ -109,14 +109,14 @@
                     <td>
                         <div class="btn-group btn-group-sm">
                             <a href="{% url 'article_detail' article.slug %}" class="btn btn-outline-primary" title="Voir">
-                                <i class="fas fa-eye"></i>
+                                Voir 
                             </a>
                             <a href="{% url 'article_update' article.slug %}" class="btn btn-outline-secondary" title="Modifier">
-                                <i class="fas fa-edit"></i>
+                                Modifier
                             </a>
                             {% if article.status == 'draft' %}
                                 <a href="{% url 'publish_article' article.slug %}" class="btn btn-outline-success" title="Publier">
-                                    <i class="fas fa-paper-plane"></i>
+                                    Publier
                                 </a>
                             {% endif %}
                         </div>

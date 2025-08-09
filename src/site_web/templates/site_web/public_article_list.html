@@ -83,6 +83,13 @@
         font-size: 0.75rem;
         font-weight: 500;
     }
+    .badge.bg-academic {
+    background-color: #6c757d;
+    color: white;
+    font-size: 0.7em;
+    padding: 0.2em 0.5em;
+    border-radius: 0.25rem;
+    }
     .article-card {
         display: grid;
         grid-template-columns: 1fr 2fr;
@@ -270,10 +277,16 @@
                                 {{ article.title }}
                             </a>
                         </h3>
-                        <div class="article-meta">
-                            <span class="article-category">{{ article.get_category_display }}</span>
-                            <span class="article-date">{{ article.created_at|date:"d F Y" }}</span>
-                        </div>
+                        
+<div class="article-meta">
+    <span class="article-category">
+        {{ article.get_public_category_display }}
+        {% if article.category == 'scholar' %}
+            <span class="badge bg-academic ms-1">Académique</span>
+        {% endif %}
+    </span>
+    <span class="article-date">{{ article.created_at|date:"d F Y" }}</span>
+</div>
                         <p class="article-excerpt">{{ article.content|striptags|truncatewords:30 }}</p>
                         <a href="{% url 'public_article_detail' article.slug %}" class="read-more">
                             Lire la suite

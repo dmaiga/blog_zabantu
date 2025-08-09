@@ -1,74 +1,178 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container mt-4">
-  <h2>Bienvenue {{ user.first_name }}</h2>
-  <!-- Section Guelakan -->
-  <div class="card mt-4">
-    <div class="card-header bg-primary text-white">Gelekan</div>
-    <div class="card-body">
-      <p>Gérez vos séminaire Gelekan publiés ou en brouillon.</p>
-      <a href="{% url 'guelekan_list' %}" class="btn btn-outline-primary me-2">
-        <i class="fas fa-newspaper me-1"></i> Voir Gelekan
-      </a>
-      <a href="{% url 'guelekan_create' %}" class="btn btn-outline-success">
-        <i class="fas fa-plus me-1"></i> Nouveau Gelekan
-      </a>
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Bienvenue {{ user.first_name }}</h2>
+        <span class="badge bg-primary">{{ user.get_role_display }}</span>
+      </div>
     </div>
   </div>
 
-  <!-- Section Articles -->
-  <div class="card mt-4">
-    <div class="card-header bg-primary text-white">Mes Articles</div>
-    <div class="card-body">
-      <p>Gérez vos articles publiés ou en brouillon.</p>
-      <a href="{% url 'article_list' %}" class="btn btn-outline-primary me-2">
-        <i class="fas fa-newspaper me-1"></i> Voir mes articles
-      </a>
-      <a href="{% url 'article_create' %}" class="btn btn-outline-success">
-        <i class="fas fa-plus me-1"></i> Nouvel article
-      </a>
+  <!-- Cartes de fonctionnalités -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <!-- Section Guelakan -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <span><i class="fas fa-book me-2"></i>Gelekan</span>
+          <span class="badge bg-light text-primary">{{ gelekan_count }}</span>
+        </div>
+        <div class="card-body">
+          <p class="card-text">Gérez vos séminaires Gelekan publiés ou en brouillon.</p>
+        </div>
+        <div class="card-footer bg-transparent">
+          <div class="d-grid gap-2 d-md-flex">
+            <a href="{% url 'guelekan_list' %}" class="btn btn-outline-primary me-md-2">
+              <i class="fas fa-list me-1"></i> Voir
+            </a>
+            <a href="{% url 'guelekan_create' %}" class="btn btn-success">
+              <i class="fas fa-plus me-1"></i> Créer
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Section Événements -->
-  <div class="card mt-4">
-    <div class="card-header bg-info text-white">Mes Événements</div>
-    <div class="card-body">
-      <p>Gérez vos événements publiés ou à venir.</p>
-      <a href="{% url 'event_list' %}" class="btn btn-outline-info me-2">
-        <i class="fas fa-calendar-alt me-1"></i> Voir mes événements
-      </a>
-      <a href="{% url 'event_create' %}" class="btn btn-outline-success">
-        <i class="fas fa-plus me-1"></i> Nouvel événement
-      </a>
+    <!-- Section Articles -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <span><i class="fas fa-newspaper me-2"></i>Articles</span>
+          <span class="badge bg-light text-primary">{{ article_count }}</span>
+        </div>
+        <div class="card-body">
+          <p class="card-text">Gérez vos articles publiés ou en brouillon.</p>
+        </div>
+        <div class="card-footer bg-transparent">
+          <div class="d-grid gap-2 d-md-flex">
+            <a href="{% url 'article_list' %}" class="btn btn-outline-primary me-md-2">
+              <i class="fas fa-list me-1"></i> Voir
+            </a>
+            <a href="{% url 'article_create' %}" class="btn btn-success">
+              <i class="fas fa-plus me-1"></i> Créer
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Événements -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+          <span><i class="fas fa-calendar-alt me-2"></i>Événements</span>
+          <span class="badge bg-light text-info">{{ event_count }}</span>
+        </div>
+        <div class="card-body">
+          <p class="card-text">Gérez vos événements publiés ou à venir.</p>
+        </div>
+        <div class="card-footer bg-transparent">
+          <div class="d-grid gap-2 d-md-flex">
+            <a href="{% url 'event_list' %}" class="btn btn-outline-info me-md-2">
+              <i class="fas fa-list me-1"></i> Voir
+            </a>
+            <a href="{% url 'event_create' %}" class="btn btn-success">
+              <i class="fas fa-plus me-1"></i> Créer
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Galerie -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <span><i class="fas fa-images me-2"></i>Galeries</span>
+          <span class="badge bg-light text-primary">{{ gallery_count }}</span>
+        </div>
+        <div class="card-body">
+          <p class="card-text">Gérez vos albums photos.</p>
+        </div>
+        <div class="card-footer bg-transparent">
+          <div class="d-grid gap-2 d-md-flex">
+            <a href="{% url 'gallery_list' %}" class="btn btn-outline-primary me-md-2">
+              <i class="fas fa-list me-1"></i> Voir
+            </a>
+            <a href="{% url 'gallery_create' %}" class="btn btn-success">
+              <i class="fas fa-plus me-1"></i> Créer
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Membres -->
+    {% if user.role == "admin" or user.role == "moderateur" %}
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <span><i class="fas fa-users me-2"></i>Membres</span>
+          <span class="badge bg-light text-primary">{{ member_count }}</span>
+        </div>
+        <div class="card-body">
+          <p class="card-text">Gérez les membres de votre équipe.</p>
+        </div>
+        <div class="card-footer bg-transparent">
+          <div class="d-grid gap-2 d-md-flex">
+            <a href="{% url 'user_list' %}" class="btn btn-outline-primary me-md-2">
+              <i class="fas fa-list me-1"></i> Voir
+            </a>
+            <a href="{% url 'create_member' %}" class="btn btn-success">
+              <i class="fas fa-plus me-1"></i> Créer
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Section Statistiques -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-success text-white">
+          <i class="fas fa-chart-line me-2"></i>Statistiques
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Total articles
+              <span class="badge bg-primary rounded-pill">{{ article_count }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Événements à venir
+              <span class="badge bg-info rounded-pill">{{ upcoming_events }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Photos en galerie
+              <span class="badge bg-primary rounded-pill">{{ photo_count }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-  <!-- Section Galerie -->
-  <div class="card mt-4">
-    <div class="card-header bg-primary text-white">Galeries</div>
-    <div class="card-body">
-      <p>Gérez vos albums photos.</p>
-      <a href="{% url 'gallery_list' %}" class="btn btn-outline-primary me-2">
-        <i class="fas fa-newspaper me-1"></i> Albums Photos
-      </a>
-      <a href="{% url 'gallery_create' %}" class="btn btn-outline-success">
-        <i class="fas fa-plus me-1"></i> Creer albums
-      </a>
-    </div>
-  </div>
-<!-- Section Création utilisateur -->
- <div class="card mt-4">
-    <div class="card-header bg-primary text-white">Membre</div>
-    <div class="card-body">
-      <p>Gérez vos membres </p>
-      <a href="{% url 'user_list' %}" class="btn btn-outline-primary me-2">
-        <i class="fas fa-newspaper me-1"></i> Voir mes articles
-      </a>
-      <a href="{% url 'create_member' %}" class="btn btn-outline-success">
-        <i class="fas fa-plus me-1"></i> Nouveau Membre
-      </a>
-    </div>
-  </div>
 
+<style>
+  .card {
+    transition: transform 0.2s ease-in-out;
+    border: none;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .card-header {
+    font-weight: 500;
+  }
+  
+  .badge {
+    font-weight: 500;
+  }
+</style>
 {% endblock %}

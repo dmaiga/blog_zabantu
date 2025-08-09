@@ -239,7 +239,7 @@ Economy | Conflict | State
                             <small class="text-muted">{{ event.date|date:"d F Y" }}</small>
                         </div>
                         <h5 class="card-title">{{ event.title }}</h5>
-                        <p class="card-text">{{ event.description|striptags|truncatewords:20 }}</p>
+                        <p class="card-text">{{ event.description|striptags|truncatewords:50 }}</p>
                         <div class="event-meta mt-3">
                             <p class="mb-1"><i class="fas fa-clock me-2"></i>{{ event.date|time:"H:i" }}</p>
                             <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}</p>
@@ -264,40 +264,50 @@ Economy | Conflict | State
 </section>
 
 <!-- Section Séminaire en vedette -->
+<!-- Section Séminaire en vedette - Version corrigée -->
 {% if featured_seminar %}
-<section class="featured-seminar mb-5 py-5">
+<section class="featured-seminar mb-5">
     <div class="container">
-        <div class="row g-0 rounded overflow-hidden shadow">
-            <div class="col-lg-6 featured-content">
-                <span class="badge bg-primary mb-3">{{ featured_seminar.get_category_display }}</span>
-                <h2>Dernier Séminaire Gɛlɛkan</h2>
-                <h3>{{ featured_seminar.title }}</h3>
-                <div class="d-flex align-items-center mb-4">
+        <div class="row g-0 rounded overflow-hidden shadow-lg" style="max-height: 400px;">
+            <!-- Contenu texte -->
+            <div class="col-lg-6 p-4 d-flex flex-column">
+                <span class="badge bg-primary mb-2 align-self-start">{{ featured_seminar.get_category_display }}</span>
+                <h3 class="mb-2">Dernier Séminaire Gɛlɛkan</h3>
+                <h4 class="mb-3">{{ featured_seminar.title }}</h4>
+                
+                <div class="d-flex align-items-center mb-3 text-muted small">
                     <div class="me-3">
-                        <i class="fas fa-calendar-alt text-muted me-2"></i>
-                        <span class="text-muted">{{ featured_seminar.created_at|date:"d F Y" }}</span>
+                        <i class="fas fa-calendar-alt me-1"></i>
+                        {{ featured_seminar.created_at|date:"d F Y" }}
                     </div>
                     <div>
-                        <i class="fas fa-user-edit text-muted me-2"></i>
-                        <span class="text-muted">{{ featured_seminar.author.get_full_name }}</span>
+                        <i class="fas fa-user-edit me-1"></i>
+                        {{ featured_seminar.author.get_full_name }}
                     </div>
                 </div>
-                <p class="mb-4">{{ featured_seminar.content|striptags|truncatewords:30 }}</p>
-                <div class="d-flex">
-                    <a href="{% url 'public_guelekan_detail' featured_seminar.slug %}" class="btn btn-primary me-3">
+                
+                <p class="mb-3 flex-grow-1">{{ featured_seminar.content|striptags|truncatewords:25 }}</p>
+                
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'public_guelekan_detail' featured_seminar.slug %}" class="btn btn-primary btn-sm">
                         Lire le compte-rendu
                     </a>
-                    <a href="#" class="btn btn-outline-primary">
-                        <i class="fas fa-download me-2"></i>PDF
+                    <a href="#" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-download me-1"></i>PDF
                     </a>
                 </div>
             </div>
-            <div class="col-lg-6">
+            
+            <!-- Conteneur image -->
+            <div class="col-lg-6 h-100">
                 {% if featured_seminar.cover_image %}
-                <img src="{{ featured_seminar.cover_image.url }}" class="img-fluid h-100 w-100" alt="{{ featured_seminar.title }}" style="object-fit: cover;">
+                <img src="{{ featured_seminar.cover_image.url }}" 
+                     class="img-fluid h-100 w-100" 
+                     style="object-fit: cover; object-position: center;"
+                     alt="{{ featured_seminar.title }}">
                 {% else %}
                 <div class="bg-light h-100 d-flex align-items-center justify-content-center">
-                    <i class="fas fa-image fa-5x text-muted"></i>
+                    <i class="fas fa-image fa-3x text-muted opacity-50"></i>
                 </div>
                 {% endif %}
             </div>
@@ -324,7 +334,7 @@ Economy | Conflict | State
                     <div class="card-body">
                         <span class="badge bg-secondary mb-2">{{ article.get_category_display }}</span>
                         <h5 class="card-title">{{ article.title }}</h5>
-                        <p class="card-text">{{ article.content|striptags|truncatewords:15 }}</p>
+                        <p class="card-text">{{ article.content|striptags|truncatewords:20 }}</p>
                     </div>
                     <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center">
                         <small class="text-muted">{{ article.created_at|date:"d M Y" }}</small>

@@ -5,102 +5,321 @@
 
 {% block extra_head %}
 <style>
-    .photo-list-section {
-        padding: 3rem 0;
+    /* Variables CSS */
+    :root {
+        --photo-primary: #3498db;
+        --photo-primary-dark: #2980b9;
+        --photo-light: #f8f9fa;
+        --photo-gray-dark: #495057;
+        --photo-gray-light: #e9ecef;
     }
-    
+
+    /* Structure générale */
+    .photo-list-section {
+        padding: 4rem 0;
+        background-color: var(--photo-light);
+    }
+
+    .container-max {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    /* En-tête */
     .section-intro {
         text-align: center;
-        margin-bottom: 3rem;
+        margin-bottom: 4rem;
     }
-    
+
+    .section-title {
+        font-size: 2.75rem;
+        color: var(--photo-primary-dark);
+        margin-bottom: 1.25rem;
+        font-weight: 700;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: var(--photo-primary);
+        border-radius: 2px;
+    }
+
+    .section-subtitle {
+        font-size: 1.25rem;
+        color: var(--photo-gray-dark);
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+
+    /* Grille de photos */
     .photo-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 2rem;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2.5rem;
+        margin-bottom: 4rem;
     }
-    
+
+    /* Carte de photo */
     .photo-card {
         background: white;
-        border-radius: 8px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         display: flex;
         flex-direction: column;
+        height: 100%;
+        position: relative;
     }
-    
+
     .photo-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
     }
-    
+
+    .photo-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: var(--photo-primary);
+    }
+
+    /* Miniature */
     .photo-thumbnail {
-        height: 220px;
+        height: 250px;
         position: relative;
         overflow: hidden;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     }
-    
+
     .photo-thumbnail img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.5s ease;
+        transition: transform 0.8s ease, opacity 0.4s ease;
     }
-    
+
     .photo-card:hover .photo-thumbnail img {
-        transform: scale(1.05);
+        transform: scale(1.1);
     }
-    
+
+    /* Corps de la carte */
     .photo-card-body {
-        padding: 1.5rem;
+        padding: 1.75rem;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
     }
-    
+
     .photo-title {
-        font-size: 1.2rem;
-        margin-bottom: 0.75rem;
-        color: var(--zabantu-primary-dark);
-    }
-    
-    .photo-caption {
-        color: var(--zabantu-gray-dark);
-        font-size: 0.95rem;
-        line-height: 1.5;
+        font-size: 1.3rem;
+        font-weight: 600;
         margin-bottom: 1rem;
+        color: var(--photo-primary-dark);
+        line-height: 1.4;
     }
-    
+
+    .photo-caption {
+        color: var(--photo-gray-dark);
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Métadonnées */
     .photo-meta {
         margin-top: auto;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 0.85rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid rgba(0,0,0,0.08);
     }
-    
+
     .photo-date {
-        color: var(--zabantu-gray);
+        color: var(--photo-gray-dark);
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
     }
-    
+
+    .photo-date i {
+        margin-right: 0.4rem;
+    }
+
+    .view-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.6rem 1.25rem;
+        background: var(--photo-primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .view-btn:hover {
+        background: var(--photo-primary-dark);
+        transform: translateX(5px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .view-btn i {
+        margin-left: 0.5rem;
+        transition: transform 0.3s;
+    }
+
+    .view-btn:hover i {
+        transform: translateX(3px);
+    }
+
+    /* État vide */
     .empty-state {
         grid-column: 1 / -1;
         text-align: center;
-        padding: 3rem;
-        background: var(--zabantu-light);
-        border-radius: 8px;
+        padding: 5rem 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
-    
+
     .empty-icon {
-        font-size: 3rem;
-        color: var(--zabantu-gray-light);
-        margin-bottom: 1rem;
+        font-size: 5rem;
+        color: var(--photo-gray-light);
+        margin-bottom: 2rem;
     }
-    
+
+    .empty-title {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+        color: var(--photo-primary-dark);
+    }
+
+    .empty-text {
+        font-size: 1.1rem;
+        color: var(--photo-gray-dark);
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Bouton d'ajout */
+    .add-btn {
+        padding: 0.8rem 1.75rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .add-btn i {
+        margin-right: 0.7rem;
+    }
+
+    /* Pagination */
+    .pagination-container {
+        margin-top: 4rem;
+    }
+
+    .pagination {
+        justify-content: center;
+    }
+
+    .page-item.active .page-link {
+        background-color: var(--photo-primary);
+        border-color: var(--photo-primary);
+    }
+
+    .page-link {
+        color: var(--photo-primary);
+        padding: 0.6rem 1.1rem;
+        margin: 0 0.3rem;
+        border-radius: 8px !important;
+        border: none;
+        font-weight: 500;
+    }
+
+    .page-link:hover {
+        background-color: var(--photo-gray-light);
+        color: var(--photo-primary-dark);
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .photo-grid {
+            gap: 2rem;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .photo-list-section {
+            padding: 3rem 0;
+        }
+        
+        .photo-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+        
+        .photo-thumbnail {
+            height: 220px;
+        }
+    }
+
     @media (max-width: 768px) {
+        .section-title {
+            font-size: 2.25rem;
+        }
+        
+        .section-subtitle {
+            font-size: 1.1rem;
+        }
+        
+        .empty-state {
+            padding: 3rem 1.5rem;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+        }
+    }
+
+    @media (max-width: 576px) {
         .photo-grid {
             grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+        }
+        
+        .photo-card-body {
+            padding: 1.5rem;
+        }
+        
+        .empty-title {
+            font-size: 1.5rem;
         }
     }
 </style>
@@ -108,17 +327,17 @@
 
 {% block content %}
 <section class="photo-list-section">
-    <div class="container">
+    <div class="container-max">
         {% include 'includes/messages.html' %}
         
         <div class="section-intro">
-            <h1>Photos</h1>
-            <p class="lead text-muted">
-                Découvrez notre collection de photos indépendantes
+            <h1 class="section-title">Nos Photos</h1>
+            <p class="section-subtitle">
+                Découvrez notre collection de photographies indépendantes et captivantes
             </p>
             
             {% if request.user.is_authenticated %}
-            <a href="{% url 'photo_create' %}" class="btn btn-primary mt-2">
+            <a href="{% url 'photo_create' %}" class="btn btn-primary add-btn">
                 <i class="fas fa-plus-circle"></i> Ajouter une photo
             </a>
             {% endif %}
@@ -130,24 +349,26 @@
                 <div class="photo-thumbnail">
                     <img src="{{ photo.image.url }}" 
                          alt="{{ photo.title|default:'Photo sans titre' }}" 
-                         loading="lazy">
+                         loading="lazy"
+                         width="300"
+                         height="250">
                 </div>
                 <div class="photo-card-body">
                     <h3 class="photo-title">{{ photo.title|default:"Sans titre" }}</h3>
                     
                     {% if photo.caption %}
                     <p class="photo-caption">
-                        {{ photo.caption|truncatewords:15 }}
+                        {{ photo.caption }}
                     </p>
                     {% endif %}
                     
                     <div class="photo-meta">
                         <span class="photo-date">
-                            <i class="far fa-calendar-alt"></i> 
+                            <i class="far fa-calendar-alt"></i>
                             {{ photo.uploaded_at|date:"d/m/Y" }}
                         </span>
-                        <span class="badge bg-primary">
-                            Voir <i class="fas fa-arrow-right ms-1"></i>
+                        <span class="view-btn">
+                            Voir <i class="fas fa-arrow-right"></i>
                         </span>
                     </div>
                 </div>
@@ -157,11 +378,17 @@
                 <div class="empty-icon">
                     <i class="fas fa-camera"></i>
                 </div>
-                <h3>Aucune photo disponible</h3>
-                <p class="text-muted">Revenez plus tard ou ajoutez votre première photo</p>
+                <h3 class="empty-title">Aucune photo disponible</h3>
+                <p class="empty-text">
+                    Revenez plus tard ou ajoutez votre première photo pour commencer la collection
+                </p>
                 {% if request.user.is_authenticated %}
-                <a href="{% url 'photo_create' %}" class="btn btn-primary mt-3">
+                <a href="{% url 'photo_create' %}" class="btn btn-primary add-btn">
                     <i class="fas fa-plus-circle"></i> Ajouter une photo
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary add-btn">
+                    <i class="fas fa-sign-in-alt"></i> Connectez-vous pour ajouter
                 </a>
                 {% endif %}
             </div>
@@ -169,47 +396,49 @@
         </div>
         
         {% if photos.has_other_pages %}
-        <nav aria-label="Navigation des photos" class="mt-5">
-            <ul class="pagination justify-content-center">
-                {% if photos.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page=1" aria-label="Première page">
-                        <span aria-hidden="true">&laquo;&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ photos.previous_page_number }}" aria-label="Précédente">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                {% endif %}
-                
-                {% for i in page_range|default:photos.paginator.get_elided_page_range %}
-                    {% if photos.number == i %}
-                    <li class="page-item active" aria-current="page">
-                        <span class="page-link">{{ i }}</span>
-                    </li>
-                    {% else %}
+        <div class="pagination-container">
+            <nav aria-label="Navigation des photos">
+                <ul class="pagination">
+                    {% if photos.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                        <a class="page-link" href="?page=1" aria-label="Première page">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ photos.previous_page_number }}" aria-label="Précédente">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
                     </li>
                     {% endif %}
-                {% endfor %}
-                
-                {% if photos.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ photos.next_page_number }}" aria-label="Suivante">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ photos.paginator.num_pages }}" aria-label="Dernière page">
-                        <span aria-hidden="true">&raquo;&raquo;</span>
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
+                    
+                    {% for i in page_range|default:photos.paginator.get_elided_page_range %}
+                        {% if photos.number == i %}
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">{{ i }}</span>
+                        </li>
+                        {% elif i > photos.number|add:'-3' and i < photos.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if photos.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ photos.next_page_number }}" aria-label="Suivante">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ photos.paginator.num_pages }}" aria-label="Dernière page">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
         {% endif %}
     </div>
 </section>

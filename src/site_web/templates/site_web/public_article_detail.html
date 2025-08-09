@@ -58,7 +58,7 @@
         margin: 2rem 0;
         border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-shadow:  ̀0 4px 12px rgba(0,0,0,0.1);
     }
     
     .article-image {
@@ -66,6 +66,52 @@
         max-height: 400px;
         object-fit: cover;
         display: block;
+    }
+    
+    /* Nouveau style pour les infos académiques */
+    .academic-meta {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-left: 4px solid var(--zabantu-primary);
+    }
+    
+    .academic-meta-title {
+        font-weight: 600;
+        color: var(--zabantu-primary-dark);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .academic-meta-grid {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 0.75rem 1.5rem;
+    }
+    
+    .academic-meta-label {
+        font-weight: 500;
+        color: var(--zabantu-gray);
+    }
+    
+    .academic-meta-value {
+        color: var(--zabantu-dark);
+    }
+    
+    .scholar-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--zabantu-primary);
+        text-decoration: none;
+        margin-top: 1rem;
+    }
+    
+    .scholar-link:hover {
+        text-decoration: underline;
     }
     
     .article-content {
@@ -159,6 +205,11 @@
         .article-subtitle {
             font-size: 1.1rem;
         }
+        
+        .academic-meta-grid {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
     }
 </style>
 
@@ -171,7 +222,7 @@
         {% endif %}
         
         <div class="article-meta">
-            <span class="article-category">{{ article.get_category_display }}</span>
+            <span class="article-category">{{ article.get_public_category_display }}</span>
             <span class="article-date">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19 4H5C3.895 4 3 4.895 3 6V20C3 21.105 3.895 22 5 22H19C20.105 22 21 21.105 21 20V6C21 4.895 20.105 4 19 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -179,7 +230,11 @@
                     <path d="M8 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                {{ article.created_at|date:"d F Y" }}
+                {% if article.category == 'scholar' and article.publication_date %}
+                    {{ article.publication_date|date:"F Y" }}
+                {% else %}
+                    {{ article.created_at|date:"d F Y" }}
+                {% endif %}
             </span>
         </div>
         
@@ -193,23 +248,78 @@
         {% endif %}
     </header>
     
+    <!-- Section spécifique aux publications académiques -->
+    {% if article.category == 'scholar' %}
+    <div class="academic-meta">
+        <h3 class="academic-meta-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 14L4 9V19L12 14ZM12 14L20 9V19L12 14ZM12 14V5M4 9L12 5L20 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            
+        </h3>
+        
+        <div class="academic-meta-grid">
+            {% if article.publisher %}
+            <div class="academic-meta-label">Éditeur:</div>
+            <div class="academic-meta-value">{{ article.publisher }}</div>
+            {% endif %}
+            
+            {% if article.journal %}
+            <div class="academic-meta-label">Revue:</div>
+            <div class="academic-meta-value">{{ article.journal }}</div>
+            {% endif %}
+            
+            {% if article.publication_date %}
+            <div class="academic-meta-label">Date de publication:</div>
+            <div class="academic-meta-value">{{ article.publication_date|date:"F Y" }}</div>
+            {% endif %}
+            
+            {% if article.authors.exists %}
+            <div class="academic-meta-label">Auteur(s):</div>
+            <div class="academic-meta-value">
+                {% for author in article.authors.all %}
+                    {{ author.get_full_name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if article.abstract %}
+        <div style="margin-top: 1rem;">
+            <div class="academic-meta-label">Résumé:</div>
+            <p class="academic-meta-value">{{ article.abstract }}</p>
+        </div>
+        {% endif %}
+        
+        {% if article.scholar_link %}
+        <a href="{{ article.scholar_link }}" target="_blank" rel="noopener" class="scholar-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 13C10.4295 13.5741 10.9774 14.0491 11.6066 14.3929C12.2357 14.7367 12.9315 14.9411 13.6467 14.9923C14.3618 15.0435 15.0796 14.9403 15.7513 14.6897C16.4231 14.4392 17.0331 14.047 17.54 13.54L20.54 10.54C21.4508 9.59695 21.9548 8.33394 21.9434 7.02296C21.932 5.71198 21.4061 4.45791 20.4791 3.53087C19.5521 2.60383 18.298 2.07799 16.987 2.0666C15.676 2.05521 14.413 2.55916 13.47 3.46997L11.75 5.17997" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 11C13.5705 10.4259 13.0226 9.95085 12.3934 9.60705C11.7643 9.26325 11.0685 9.05886 10.3533 9.00766C9.63821 8.95646 8.92042 9.05966 8.24866 9.31021C7.5769 9.56076 6.96689 9.95296 6.46 10.46L3.46 13.46C2.54919 14.403 2.04524 15.666 2.05663 16.977C2.06802 18.288 2.59386 19.542 3.5209 20.4691C4.44794 21.3961 5.70201 21.922 7.01299 21.9334C8.32397 21.9448 9.58698 21.4408 10.53 20.53L12.24 18.82" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Voir sur Google Scholar
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+    
     <div class="article-content">
         {{ article.content|safe }}
     </div>
     
-    {% if authors %}
+    {% if article.authors.exists %}
     <footer class="article-footer">
-        <h3>Auteurs</h3>
+        <h3>Auteur(s)</h3>
         <div class="authors-section">
-            {% for author in authors %}
+            {% for author in article.authors.all %}
             <div class="author-card">
                 <div class="author-avatar">
-                    {{ author.prenom|first|upper }}{{ author.nom|first|upper }}
+                    {{ author.first_name|first|upper }}{{ author.last_name|first|upper }}
                 </div>
                 <div class="author-info">
-                    <div class="author-name">{{ author.prenom }} {{ author.nom }}</div>
-                    {% if author.position %}
-                    <div class="author-position">{{ author.position }}</div>
+                    <div class="author-name">{{ author.get_full_name }}</div>
+                    {% if author.profile.position %}
+                    <div class="author-position">{{ author.profile.position }}</div>
                     {% endif %}
                 </div>
             </div>

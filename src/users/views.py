@@ -8,6 +8,46 @@ from django.shortcuts import render, get_object_or_404
 from .models import CustomUser
 from .forms import CustomMemberCreationForm
 
+#--------------------------------------------------------------------
+#08_08
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
+from django.views.generic import DetailView, UpdateView
+from django.contrib import messages
+from .models import CustomUser
+from .forms import ProfileEditForm, CustomPasswordChangeForm
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = CustomUser
+    template_name = 'users/profile.html'
+    context_object_name = 'user'
+
+    def get_object(self):
+        return self.request.user
+
+class ProfileEditView(LoginRequiredMixin, UpdateView):
+    model = CustomUser
+    form_class = ProfileEditForm
+    template_name = 'users/profile_edit.html'
+    success_url = reverse_lazy('profile')
+
+    def get_object(self):
+        return self.request.user
+
+    def form_valid(self, form):
+        messages.success(self.request, "Votre profil a été mis à jour avec succès.")
+        return super().form_valid(form)
+
+class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    form_class = CustomPasswordChangeForm
+    template_name = 'users/password_change.html'
+    success_url = reverse_lazy('profile')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Votre mot de passe a été changé avec succès.")
+        return super().form_valid(form)
+#_______________________________________________________________
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -74,3 +114,4 @@ def create_member_view(request):
     else:
         form = CustomMemberCreationForm()
     return render(request, 'users/create_member.html', {'form': form})
+

@@ -40,3 +40,47 @@ class CustomMemberCreationForm(forms.ModelForm):
             user.save()
         return user
 
+from django import forms
+from django.contrib.auth.forms import PasswordChangeForm
+from django.core.validators import RegexValidator
+from .models import CustomUser
+
+class ProfileEditForm(forms.ModelForm):
+    phone_regex = RegexValidator(
+        regex=r'^\+?1?\d{9,15}$',
+        message="Le numéro doit être au format: '+999999999'. Jusqu'à 15 chiffres."
+    )
+    
+    phone_number = forms.CharField(
+        validators=[phone_regex],
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': '+261 34 12 345 67'
+        })
+    )
+    
+    class Meta:
+        model = CustomUser
+        fields = [
+            'profile_picture',
+            'nom',
+            'prenom',
+            'email',
+            'phone_number',
+            'job_title',
+            'department',
+            'bio',
+            'social_facebook',
+            'social_linkedin',
+            'social_twitter',
+            'social_instagram'
+        ]
+        widgets = {
+            'bio': forms.Textarea(attrs={'rows': 4}),
+        }
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
