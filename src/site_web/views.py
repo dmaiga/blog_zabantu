@@ -14,6 +14,34 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core.cache import cache
 
+
+
+#09_08
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth import get_user_model
+from django.core.paginator import Paginator
+
+def public_member_detail(request, pk):
+    """Détail d'un membre"""
+    member = get_object_or_404(
+        CustomUser,
+        pk=pk,
+        is_active=True,
+        role__in=['moderateur', 'membre']
+    )
+    
+    # Récupérer les articles publiés dont le membre est auteur
+    articles = Article.objects.filter(
+        authors=member,
+        status='published'
+    ).order_by('-publish_at')
+    
+    return render(request, 'site_web/public_member_detail.html', {
+        'member': member,
+        'articles': articles
+    })
+
+#09_08
 #------------------------------------------------------------------------------
 #06_08_2025
 # views.py
@@ -344,14 +372,14 @@ def about_view(request):
 
 #05_08
 #______________________________________________________________________________
-
 CATEGORY_LABELS = {
+    'article': 'Articles & Publications Académiques',  
     'analyse': 'Analyses',
-    'article': 'Articles',
     'policy': 'Policy Briefs',
     'ouvrage': 'Ouvrages',
     'rapport': 'Rapports'
 }
+
 def public_article_list(request):
     current_filter = request.GET.get('type')
     search_query = request.GET.get('q')
@@ -359,8 +387,10 @@ def public_article_list(request):
     
     articles = Article.objects.filter(status='published')
     
-    # Filtrage par catégorie
-    if current_filter:
+    # Filtrage spécial pour les articles (inclut scholar)
+    if current_filter == 'article':
+        articles = articles.filter(Q(category='article') | Q(category='scholar'))
+    elif current_filter:  # Filtrage normal pour les autres catégories
         articles = articles.filter(category=current_filter)
     
     # Recherche
@@ -381,14 +411,21 @@ def public_article_list(request):
     else:  # date_desc par défaut
         articles = articles.order_by('-created_at')
     
-    # Compteurs pour les filtres
+    # Compteurs pour les filtres (modifié pour inclure scholar dans 'article')
     total_count = Article.objects.filter(status='published').count()
     guelekan_count = Guelekan.objects.filter(status='published').count()
     
     category_counts_qs = Article.objects.filter(status='published') \
         .values('category') \
         .annotate(count=Count('id'))
-    category_counts = {item['category']: item['count'] for item in category_counts_qs}
+    
+    # Calcul spécial pour le regroupement article/scholar
+    category_counts = {}
+    for item in category_counts_qs:
+        if item['category'] == 'scholar':
+            category_counts['article'] = category_counts.get('article', 0) + item['count']
+        else:
+            category_counts[item['category']] = item['count']
     
     category_data = [
         (key, CATEGORY_LABELS[key], category_counts.get(key, 0))
@@ -409,6 +446,7 @@ def public_article_list(request):
         'is_paginated': paginator.num_pages > 1,
     }
     return render(request, 'site_web/public_article_list.html', context)
+
 
 def public_article_detail(request, slug):
     article = get_object_or_404(
@@ -519,18 +557,7 @@ def public_member_list(request):
         'members': members
     })
 
-def public_member_detail(request, pk):
-    """Détail d'un membre"""
-    member = get_object_or_404(
-        CustomUser,
-        pk=pk,
-        is_active=True,
-        role__in=['moderateur', 'membre']
-    )
-    
-    return render(request, 'site_web/public_member_detail.html', {
-        'member': member.get_public_profile()
-    })
+
 
 def public_guelekan_list(request):
     # Récupérer seulement les Guelekan publiés

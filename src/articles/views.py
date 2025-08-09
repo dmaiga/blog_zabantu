@@ -146,6 +146,7 @@ def unpublish_article(request, slug):
     return redirect('article_detail', slug=slug)  # Redirige vers le détail de l'article
 
 
+
 #
 #---------------------------------------------------------
 #                              Guelekan    

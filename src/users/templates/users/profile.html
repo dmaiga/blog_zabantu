@@ -1,10 +1,168 @@
-<!-- users/templates/users/profile.html -->
 {% extends 'base.html' %}
-{% block title %}Profil{% endblock %}
+{% load static %}
+
+{% block title %}Mon Profil | {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .profile-header {
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        color: white;
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .profile-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: rgba(255,255,255,0.2);
+    }
+    
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .profile-role {
+        display: inline-block;
+        background: rgba(255,255,255,0.2);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+    
+    .social-links a {
+        color: #6c757d;
+        font-size: 1.25rem;
+        margin-right: 1rem;
+        transition: all 0.3s;
+    }
+    
+    .social-links a:hover {
+        color: #3498db;
+        transform: translateY(-3px);
+    }
+    
+    .info-card {
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+        border: none;
+    }
+    
+    .info-card .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h2>Mon Profil</h2>
-<p><strong>Nom :</strong> {{ user.last_name }}</p>
-<p><strong>Prénom :</strong> {{ user.first_name }}</p>
-<p><strong>Email :</strong> {{ user.email }}</p>
-<a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Retour</a>
+<div class="profile-container">
+    <div class="profile-header text-center">
+        <img src="{{ user.get_profile_picture }}" class="profile-picture mb-3" alt="Photo de profil">
+        <h2>{{ user.get_full_name }}</h2>
+        <div class="profile-role">{{ user.get_role_display }}</div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card info-card">
+                <div class="card-header">
+                    <i class="fas fa-id-card me-2"></i> Informations personnelles
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-1">Email</h6>
+                        <p>{{ user.email }}</p>
+                    </div>
+                    
+                    {% if user.phone_number %}
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-1">Téléphone</h6>
+                        <p>{{ user.phone_number }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if user.date_started %}
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-1">Membre depuis</h6>
+                        <p>{{ user.date_started|date:"F Y" }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'profile_edit' %}" class="btn btn-primary">
+                            <i class="fas fa-edit me-1"></i> Modifier le profil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card info-card">
+                <div class="card-header">
+                    <i class="fas fa-briefcase me-2"></i> Informations professionnelles
+                </div>
+                <div class="card-body">
+                    {% if user.job_title or user.department %}
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-1">Poste</h6>
+                        <p>
+                            {% if user.job_title %}{{ user.job_title }}{% endif %}
+                            {% if user.department %} - {{ user.department }}{% endif %}
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if user.bio %}
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-1">Biographie</h6>
+                        <p>{{ user.bio|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if user.social_facebook or user.social_linkedin or user.social_twitter %}
+                    <div class="mt-4">
+                        <h6 class="text-muted mb-3">Réseaux sociaux</h6>
+                        <div class="social-links">
+                            {% if user.social_facebook %}
+                            <a href="{{ user.social_facebook }}" target="_blank"><i class="fab fa-facebook"></i></a>
+                            {% endif %}
+                            {% if user.social_linkedin %}
+                            <a href="{{ user.social_linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>
+                            {% endif %}
+                            {% if user.social_twitter %}
+                            <a href="{{ user.social_twitter }}" target="_blank"><i class="fab fa-twitter"></i></a>
+                            {% endif %}
+                            {% if user.social_instagram %}
+                            <a href="{{ user.social_instagram }}" target="_blank"><i class="fab fa-instagram"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

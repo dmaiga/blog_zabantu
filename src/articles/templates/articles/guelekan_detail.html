@@ -2,55 +2,172 @@
 
 {% block content %}
 <div class="container mt-4">
+    <!-- En-tête avec titre et statut -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>{{ guelekan.title }}</h1>
         <span class="badge 
             {% if guelekan.status == 'published' %}bg-success
             {% else %}bg-warning{% endif %}">
             {{ guelekan.get_status_display }}
+            {% if guelekan.publish_at and guelekan.publish_at > timezone.now %}
+                ({{ guelekan.publish_at|date:"d/m/Y H:i" }})
+            {% endif %}
         </span>
     </div>
 
-    {% if guelekan.cover_image %}
-    <img src="{{ guelekan.cover_image.url }}" 
-         class="img-fluid rounded mb-4" 
-         alt="{{ guelekan.title }}">
-    {% endif %}
-
-    <div class="mb-4">
-        {{ guelekan.content|safe }}
+    <!-- Boutons d'action en haut -->
+    <div class="card mb-4">
+        <div class="card-body p-2">
+            <div class="d-flex justify-content-between flex-wrap gap-2">
+                <a href="{% url 'guelekan_list' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                </a>
+                
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'guelekan_update' guelekan.slug %}" class="btn btn-outline-primary">
+                        <i class="fas fa-edit"></i> Modifier
+                    </a>
+                    {% if guelekan.status == 'published' %}
+                        <a href="{% url 'unpublish_guelekan' guelekan.slug %}" class="btn btn-outline-warning">
+                            <i class="fas fa-eye-slash"></i> Dépublier
+                        </a>
+                    {% else %}
+                        <a href="{% url 'publish_guelekan' guelekan.slug %}" class="btn btn-outline-success">
+                            <i class="fas fa-paper-plane"></i> Publier
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'guelekan_delete' guelekan.slug %}" class="btn btn-outline-danger">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    {% if guelekan.pdf_file %}
-    <div class="mb-4">
-        <a href="{{ guelekan.pdf_file.url }}" class="btn btn-primary" target="_blank">
-            <i class="fas fa-file-pdf"></i> Télécharger le PDF
-        </a>
-    </div>
-    {% endif %}
-
-    <div class="d-flex justify-content-between">
-        <a href="{% url 'guelekan_list' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Retour à la liste
-        </a>
-        
-        <div class="btn-group">
-            <a href="{% url 'guelekan_update' guelekan.slug %}" class="btn btn-outline-primary">
-                <i class="fas fa-edit"></i> Modifier
-            </a>
-            {% if guelekan.status == 'published' %}
-                <a href="{% url 'unpublish_guelekan' guelekan.slug %}" class="btn btn-outline-warning">
-                    <i class="fas fa-eye-slash"></i> Dépublier
-                </a>
-            {% else %}
-                <a href="{% url 'publish_guelekan' guelekan.slug %}" class="btn btn-outline-success">
-                    <i class="fas fa-paper-plane"></i> Publier
-                </a>
+    <!-- Contenu principal avec image à gauche et métadonnées à droite -->
+    <div class="row">
+        <!-- Colonne de gauche (Image + Contenu) -->
+        <div class="col-md-8">
+            {% if guelekan.cover_image %}
+            <div class="mb-4">
+                <img src="{{ guelekan.cover_image.url }}" 
+                     class="img-fluid rounded article-cover-img" 
+                     alt="{{ guelekan.title }}">
+            </div>
             {% endif %}
-            <a href="{% url 'guelekan_delete' guelekan.slug %}" class="btn btn-outline-danger">
-                <i class="fas fa-trash"></i> Supprimer
-            </a>
+
+            {% if guelekan.subtitle %}
+            <h3 class="mb-3 text-muted">{{ guelekan.subtitle }}</h3>
+            {% endif %}
+
+            <div class="article-content mb-4">
+                {{ guelekan.content|safe }}
+            </div>
+
+            {% if guelekan.pdf_file %}
+            <div class="mb-4">
+                <a href="{{ guelekan.pdf_file.url }}" class="btn btn-primary" target="_blank">
+                    <i class="fas fa-file-pdf"></i> Télécharger le PDF
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Colonne de droite (Métadonnées) -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Informations</h5>
+                    
+                    <dl class="row">
+                        <dt class="col-sm-5">Statut</dt>
+                        <dd class="col-sm-7">
+                            <span class="badge 
+                                {% if guelekan.status == 'published' %}bg-success
+                                {% else %}bg-warning{% endif %}">
+                                {{ guelekan.get_status_display }}
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-5">Créé le</dt>
+                        <dd class="col-sm-7">{{ guelekan.created_at|date:"d/m/Y H:i" }}</dd>
+
+                        <dt class="col-sm-5">Modifié le</dt>
+                        <dd class="col-sm-7">{{ guelekan.updated_at|date:"d/m/Y H:i" }}</dd>
+
+                        {% if guelekan.publish_at %}
+                        <dt class="col-sm-5">Publication prévue</dt>
+                        <dd class="col-sm-7">{{ guelekan.publish_at|date:"d/m/Y H:i" }}</dd>
+                        {% endif %}
+
+                        <dt class="col-sm-5">URL</dt>
+                        <dd class="col-sm-7">
+                            <small><code>/guelekan/{{ guelekan.slug }}/</code></small>
+                        </dd>
+                    </dl>
+
+                    <hr>
+
+                    <h6 class="mt-3">SEO</h6>
+                    <dl class="row">
+                        <dt class="col-sm-5">Titre SEO</dt>
+                        <dd class="col-sm-7">{{ guelekan.meta_title }}</dd>
+
+                        <dt class="col-sm-5">Description SEO</dt>
+                        <dd class="col-sm-7">
+                            <small class="text-muted">{{ guelekan.meta_description }}</small>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>ID: {{ guelekan.id }}</small>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Style pour l'image de couverture */
+    .article-cover-img {
+        max-height: 400px;
+        width: 100%;
+        object-fit: cover;
+    }
+    
+    /* Style pour les métadonnées */
+    dt {
+        font-weight: 500;
+    }
+    
+    dd {
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Style pour les boutons */
+    .gap-2 {
+        gap: 0.5rem;
+    }
+    
+    /* Adaptation pour petits écrans */
+    @media (max-width: 768px) {
+        .article-cover-img {
+            max-height: 300px;
+        }
+        
+        .d-flex.justify-content-between.flex-wrap {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .d-flex.justify-content-between.flex-wrap > * {
+            width: 100%;
+        }
+        
+        .btn {
+            width: 100%;
+            margin-bottom: 0.25rem;
+        }
+    }
+</style>
 {% endblock %}

@@ -1,92 +1,122 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
 <div class="container mt-4">
-    <h1 class="mb-4">
-        {% if is_edit %}Modifier l'article{% else %}Nouvel article{% endif %}
-    </h1>
-
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-         {{ form.media }}
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">Titre</label>
-                            {{ form.title }}
-                            {% if form.title.errors %}
-                                <div class="text-danger">{{ form.title.errors }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Sous titre</label>
-                            {{ form.subtitle }}
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Contenu</label>
-                            {{ form.content }}
-                        </div>
+    <h2 class="mb-4">{% if form.instance.pk %}Modifier{% else %}Créer{% endif %} un Article</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" id="article-form">
+                {% csrf_token %}
+                
+                <!-- Section commune -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Titre*</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Sous-titre</label>
+                        {{ form.subtitle }}
                     </div>
                 </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Auteur</label>
-                            {{ form.authors }}
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Catégorie</label>
-                            {{ form.category }}
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Image de couverture</label>
-                            {{ form.cover_image }}
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Fichier PDF (optionnel)</label>
-                            {{ form.pdf_file }}
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Statut</label>
-                            {{ form.status }}
-                        </div>
-                        
-                       
-                        
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-save"></i> Enregistrer
-                        </button>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Auteur(s)*</label>
+                        {{ form.authors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Statut*</label>
+                        {{ form.status }}
                     </div>
                 </div>
-            </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Image de couverture*</label>
+                        {{ form.cover_image }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Fichier PDF</label>
+                        {{ form.pdf_file }}
+                    </div>
+                </div>
+                
+                <!-- Switch pour publication académique -->
+                <div class="mb-3 form-check form-switch">
+                    {{ form.is_academic }}
+                    <label class="form-check-label" for="{{ form.is_academic.id_for_label }}">
+                        Publication académique
+                    </label>
+                </div>
+                
+                <!-- Section académique (cachée par défaut) -->
+                <div id="academic-fields" style="display: none;">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Éditeur/Revue*</label>
+                            {{ form.publisher }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Date de publication*</label>
+                            {{ form.publication_date }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Résumé*</label>
+                        {{ form.abstract }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Lien Scholar</label>
+                        {{ form.scholar_link }}
+                    </div>
+                </div>
+                
+                <!-- Section contenu (cachée pour les publications académiques) -->
+                <div id="content-fields">
+                    <div class="mb-3">
+                        <label class="form-label">Catégorie</label>
+                        {{ form.category }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Contenu*</label>
+                        {{ form.content }}
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Enregistrer
+                </button>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-// Initialisation de TinyMCE
 document.addEventListener('DOMContentLoaded', function() {
-    // Votre configuration TinyMCE ici
-});
-$(document).ready(function() {
-    $('.select2').select2({
-        placeholder: "Sélectionnez un ou plusieurs auteurs",
-        allowClear: true
-    });
+    const academicSwitch = document.getElementById('{{ form.is_academic.id_for_label }}');
+    const academicFields = document.getElementById('academic-fields');
+    const contentFields = document.getElementById('content-fields');
+    
+    function toggleFields() {
+        if (academicSwitch.checked) {
+            academicFields.style.display = 'block';
+            contentFields.style.display = 'none';
+        } else {
+            academicFields.style.display = 'none';
+            contentFields.style.display = 'block';
+        }
+    }
+    
+    // Initial toggle
+    toggleFields();
+    
+    // Event listener
+    academicSwitch.addEventListener('change', toggleFields);
 });
 </script>
 {% endblock %}

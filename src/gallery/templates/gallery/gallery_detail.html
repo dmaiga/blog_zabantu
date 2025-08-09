@@ -5,198 +5,331 @@
 
 {% block extra_head %}
 <style>
-    .gallery-detail-container {
-        padding-bottom: 3rem;
+    /* Variables */
+    :root {
+        --gallery-primary: #3498db;
+        --gallery-primary-dark: #2980b9;
+        --gallery-light: #f8f9fa;
+        --gallery-gray-dark: #495057;
+        --gallery-gray-light: #e9ecef;
     }
-    
+
+    /* Structure */
+    .gallery-detail-container {
+        padding: 3rem 0 5rem;
+    }
+
+    /* Header */
     .gallery-header {
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 4rem 0;
-        margin-bottom: 3rem;
-        border-radius: 12px;
+        padding: 5rem 0;
+        margin-bottom: 4rem;
         text-align: center;
         position: relative;
         overflow: hidden;
+        border-bottom: 4px solid var(--gallery-primary);
     }
-    
-    .gallery-header::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--zabantu-primary), var(--zabantu-primary-dark));
-    }
-    
-    .gallery-title {
-        font-size: 2.5rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: var(--zabantu-primary-dark);
-    }
-    
-    .gallery-description {
-        font-size: 1.1rem;
-        color: var(--zabantu-gray-dark);
+
+    .gallery-header-content {
         max-width: 800px;
         margin: 0 auto;
-        line-height: 1.6;
+        padding: 0 1.5rem;
     }
-    
+
+    .gallery-title {
+        font-size: 2.75rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--gallery-primary-dark);
+        position: relative;
+        display: inline-block;
+    }
+
+    .gallery-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: var(--gallery-primary);
+    }
+
+    .gallery-description {
+        font-size: 1.2rem;
+        color: var(--gallery-gray-dark);
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+
+    /* Actions */
     .gallery-actions {
-        margin-top: 2rem;
         display: flex;
         justify-content: center;
-        gap: 1rem;
+        gap: 1.5rem;
         flex-wrap: wrap;
+        margin-top: 3rem;
     }
-    
+
+    .action-btn {
+        padding: 0.8rem 1.75rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.3s;
+    }
+
+    .action-btn i {
+        margin-right: 0.7rem;
+    }
+
+    /* Photo Grid */
     .photo-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 2rem;
-        margin-bottom: 3rem;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2.5rem;
+        margin-bottom: 4rem;
     }
-    
+
+    /* Photo Card */
     .photo-card {
         background: white;
-        border-radius: 10px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         height: 100%;
         display: flex;
         flex-direction: column;
+        position: relative;
     }
-    
+
     .photo-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
     }
-    
+
     .photo-img-container {
-        height: 220px;
+        height: 250px;
         overflow: hidden;
         position: relative;
         background: #f8f9fa;
     }
-    
+
     .photo-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.5s ease;
+        transition: transform 0.8s ease;
     }
-    
+
     .photo-card:hover .photo-img {
-        transform: scale(1.05);
+        transform: scale(1.1);
     }
-    
+
     .photo-info {
-        padding: 1.5rem;
+        padding: 1.75rem;
         flex-grow: 1;
     }
-    
+
     .photo-title {
-        font-size: 1.1rem;
+        font-size: 1.25rem;
         font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: var(--zabantu-primary-dark);
+        margin-bottom: 0.75rem;
+        color: var(--gallery-primary-dark);
     }
-    
+
     .photo-caption {
-        color: var(--zabantu-gray-dark);
-        font-size: 0.9rem;
-        line-height: 1.5;
+        color: var(--gallery-gray-dark);
+        font-size: 0.95rem;
+        line-height: 1.6;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    
+
     .view-btn {
         display: inline-flex;
         align-items: center;
-        margin-top: 1rem;
-        padding: 0.5rem 1rem;
-        background: var(--zabantu-light);
-        color: var(--zabantu-primary-dark);
+        margin-top: 1.25rem;
+        padding: 0.6rem 1.25rem;
+        background: var(--gallery-primary);
+        color: white;
         border-radius: 6px;
-        font-size: 0.85rem;
+        font-size: 0.95rem;
+        font-weight: 500;
         transition: all 0.3s;
     }
-    
+
     .view-btn:hover {
-        background: var(--zabantu-primary);
-        color: white;
+        background: var(--gallery-primary-dark);
+        transform: translateX(5px);
         text-decoration: none;
+        color: white;
     }
-    
+
+    .view-btn i {
+        margin-left: 0.5rem;
+        transition: transform 0.3s;
+    }
+
+    .view-btn:hover i {
+        transform: translateX(3px);
+    }
+
+    /* Empty State */
     .empty-state {
         grid-column: 1 / -1;
         text-align: center;
-        padding: 4rem;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 5rem 2rem;
+        background: white;
         border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
-    
+
     .empty-icon {
-        font-size: 4rem;
-        color: var(--zabantu-gray-light);
-        margin-bottom: 1.5rem;
-        opacity: 0.7;
+        font-size: 5rem;
+        color: var(--gallery-gray-light);
+        margin-bottom: 2rem;
     }
-    
+
+    .empty-title {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+        color: var(--gallery-primary-dark);
+    }
+
+    .empty-text {
+        font-size: 1.1rem;
+        color: var(--gallery-gray-dark);
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Pagination */
+    .pagination-container {
+        margin-top: 4rem;
+    }
+
     .pagination {
-        margin-top: 3rem;
+        justify-content: center;
     }
-    
+
     .page-item.active .page-link {
-        background-color: var(--zabantu-primary);
-        border-color: var(--zabantu-primary);
+        background-color: var(--gallery-primary);
+        border-color: var(--gallery-primary);
     }
-    
+
+    .page-link {
+        color: var(--gallery-primary);
+        padding: 0.6rem 1.1rem;
+        margin: 0 0.3rem;
+        border-radius: 8px !important;
+        border: none;
+        font-weight: 500;
+    }
+
+    .page-link:hover {
+        background-color: var(--gallery-gray-light);
+        color: var(--gallery-primary-dark);
+    }
+
+    /* Back Link */
     .back-link {
         display: inline-flex;
         align-items: center;
         margin-top: 3rem;
-        padding: 0.75rem 1.5rem;
-        background: var(--zabantu-light);
-        color: var(--zabantu-primary-dark);
+        padding: 0.8rem 1.75rem;
+        background: var(--gallery-light);
+        color: var(--gallery-primary-dark);
         border-radius: 8px;
+        font-weight: 500;
         transition: all 0.3s;
     }
-    
+
     .back-link:hover {
-        background: var(--zabantu-primary);
+        background: var(--gallery-primary);
         color: white;
         text-decoration: none;
+        transform: translateX(-5px);
+    }
+
+    .back-link i {
+        margin-right: 0.7rem;
+        transition: transform 0.3s;
+    }
+
+    .back-link:hover i {
         transform: translateX(-3px);
     }
-    
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .photo-grid {
+            gap: 2rem;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .gallery-header {
+            padding: 4rem 0;
+        }
+        
+        .photo-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+        
+        .photo-img-container {
+            height: 220px;
+        }
+    }
+
     @media (max-width: 768px) {
+        .gallery-title {
+            font-size: 2.25rem;
+        }
+        
+        .gallery-description {
+            font-size: 1.1rem;
+        }
+        
+        .empty-state {
+            padding: 3rem 1.5rem;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .gallery-header {
+            padding: 3rem 0;
+        }
+        
+        .photo-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
         .gallery-title {
             font-size: 2rem;
         }
         
-        .gallery-header {
-            padding: 3rem 1rem;
-        }
-        
-        .photo-img-container {
-            height: 180px;
-        }
-    }
-    
-    @media (max-width: 576px) {
         .gallery-actions {
             flex-direction: column;
             align-items: center;
         }
         
-        .empty-state {
-            padding: 2.5rem 1.5rem;
+        .action-btn {
+            width: 100%;
+            justify-content: center;
         }
     }
 </style>
@@ -207,8 +340,9 @@
     <div class="container">
         {% include 'includes/messages.html' %}
 
+        <!-- Gallery Header -->
         <div class="gallery-header">
-            <div class="container">
+            <div class="gallery-header-content">
                 <h1 class="gallery-title">{{ gallery.title }}</h1>
                 {% if gallery.description %}
                 <p class="gallery-description">{{ gallery.description }}</p>
@@ -217,22 +351,23 @@
                 <div class="gallery-actions">
                     {% if request.user == gallery.created_by or request.user.is_superuser %}
                     <a href="{% url 'gallery_update' gallery.slug %}" 
-                       class="btn btn-outline-primary btn-lg">
-                        <i class="fas fa-edit me-2"></i> Modifier
+                       class="btn btn-outline-primary action-btn">
+                        <i class="fas fa-edit"></i> Modifier
                     </a>
                     <a href="{% url 'gallery_delete' gallery.slug %}" 
-                       class="btn btn-outline-danger btn-lg">
-                        <i class="fas fa-trash me-2"></i> Supprimer
+                       class="btn btn-outline-danger action-btn">
+                        <i class="fas fa-trash"></i> Supprimer
                     </a>
                     {% endif %}
                     <a href="{% url 'photo_create' %}?gallery={{ gallery.id }}" 
-                       class="btn btn-primary btn-lg">
-                        <i class="fas fa-plus me-2"></i> Ajouter des photos
+                       class="btn btn-primary action-btn">
+                        <i class="fas fa-plus"></i> Ajouter des photos
                     </a>
                 </div>
             </div>
         </div>
 
+        <!-- Photo Grid -->
         <div class="photo-grid">
             {% for photo in photos %}
             <a href="{% url 'photo_detail' photo.pk %}" class="photo-card text-decoration-none">
@@ -241,8 +376,8 @@
                          alt="{{ photo.title|default:'Photo sans titre' }}" 
                          class="photo-img"
                          loading="lazy"
-                         width="280"
-                         height="220">
+                         width="300"
+                         height="250">
                 </div>
                 <div class="photo-info">
                     <h3 class="photo-title">{{ photo.title|default:"Sans titre" }}</h3>
@@ -250,7 +385,7 @@
                     <p class="photo-caption">{{ photo.caption }}</p>
                     {% endif %}
                     <span class="view-btn">
-                        Voir <i class="fas fa-arrow-right ms-2"></i>
+                        Voir <i class="fas fa-arrow-right"></i>
                     </span>
                 </div>
             </a>
@@ -259,59 +394,70 @@
                 <div class="empty-icon">
                     <i class="fas fa-images"></i>
                 </div>
-                <h3>Cette galerie est vide</h3>
-                <p class="text-muted mb-4">Ajoutez votre première photo pour commencer</p>
+                <h3 class="empty-title">Cette galerie est vide</h3>
+                <p class="empty-text">
+                    Commencez par ajouter des photos pour enrichir cette galerie.
+                </p>
                 {% if request.user.is_authenticated %}
                 <a href="{% url 'photo_create' %}?gallery={{ gallery.id }}" 
-                   class="btn btn-primary btn-lg">
-                    <i class="fas fa-plus me-2"></i> Ajouter une photo
+                   class="btn btn-primary action-btn">
+                    <i class="fas fa-plus"></i> Ajouter une photo
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}?next={{ request.path }}" 
+                   class="btn btn-primary action-btn">
+                    <i class="fas fa-sign-in-alt"></i> Connectez-vous pour ajouter
                 </a>
                 {% endif %}
             </div>
             {% endfor %}
         </div>
 
+        <!-- Pagination -->
         {% if photos.has_other_pages %}
-        <nav aria-label="Navigation des photos">
-            <ul class="pagination justify-content-center">
-                {% if photos.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" 
-                       href="?page={{ photos.previous_page_number }}" 
-                       aria-label="Précédent">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                {% endif %}
-                
-                {% for i in photos.paginator.page_range %}
-                    {% if photos.number == i %}
-                    <li class="page-item active" aria-current="page">
-                        <span class="page-link">{{ i }}</span>
-                    </li>
-                    {% else %}
+        <div class="pagination-container">
+            <nav aria-label="Navigation des photos">
+                <ul class="pagination">
+                    {% if photos.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                        <a class="page-link" 
+                           href="?page={{ photos.previous_page_number }}" 
+                           aria-label="Précédent">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
                     </li>
                     {% endif %}
-                {% endfor %}
-                
-                {% if photos.has_next %}
-                <li class="page-item">
-                    <a class="page-link" 
-                       href="?page={{ photos.next_page_number }}" 
-                       aria-label="Suivant">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
+                    
+                    {% for i in photos.paginator.page_range %}
+                        {% if photos.number == i %}
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">{{ i }}</span>
+                        </li>
+                        {% elif i > photos.number|add:'-3' and i < photos.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if photos.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" 
+                           href="?page={{ photos.next_page_number }}" 
+                           aria-label="Suivant">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
         {% endif %}
 
+        <!-- Back Link -->
         <div class="text-center">
             <a href="{% url 'gallery_list' %}" class="back-link">
-                <i class="fas fa-arrow-left me-2"></i> Retour aux galeries
+                <i class="fas fa-arrow-left"></i> Retour aux galeries
             </a>
         </div>
     </div>

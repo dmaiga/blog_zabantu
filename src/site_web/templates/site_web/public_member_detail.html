@@ -1,9 +1,9 @@
 {% extends 'base_public.html' %}
 
-{% block title %}{{ member.full_name }} - Zabantu{% endblock %}
+{% block title %}{{ member.get_full_name }} - Zabantu{% endblock %}
 
-{% block banner_title %}{{ member.full_name }}{% endblock %}
-{% block banner_subtitle %}{{ member.job }}{% endblock %}
+{% block banner_title %}{{ member.get_full_name }}{% endblock %}
+{% block banner_subtitle %}{{ member.job_title }}{% endblock %}
 
 {% block content %}
 <style>
@@ -39,6 +39,28 @@
         font-weight: 600;
         color: var(--zabantu-primary);
     }
+    .article-list {
+        margin-top: 40px;
+    }
+    .article-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+    }
+    .article-item:last-child {
+        border-bottom: none;
+    }
+    .article-item a {
+        color: var(--zabantu-primary);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .article-item a:hover {
+        color: var(--zabantu-secondary);
+    }
+    .article-meta {
+        font-size: 0.9rem;
+        color: #666;
+    }
 </style>
 
 <div class="container">
@@ -46,31 +68,31 @@
         <!-- Photo et informations principales -->
         <div class="col-lg-4 mb-4">
             <div class="member-profile">
-                <img src="{{ member.profile_picture }}" 
+                <img src="{{ member.get_profile_picture }}" 
                      class="profile-img" 
-                     alt="{{ member.full_name }}">
+                     alt="{{ member.get_full_name }}">
                 
                 <div class="p-4">
-                    <h4 class="mb-3">{{ member.full_name }}</h4>
+                    <h4 class="mb-3">{{ member.get_full_name }}</h4>
                     
-                    {% if member.job %}
-                    <p class="text-muted mb-4">{{ member.job }}</p>
+                    {% if member.job_title %}
+                    <p class="text-muted mb-4">{{ member.job_title }}</p>
                     {% endif %}
                     
                     <!-- Liens sociaux -->
                     <div class="mb-4">
-                        {% if member.social_links.linkedin %}
-                        <a href="{{ member.social_links.linkedin }}" target="_blank" class="social-link">
+                        {% if member.social_linkedin %}
+                        <a href="{{ member.social_linkedin }}" target="_blank" class="social-link">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
                         {% endif %}
-                        {% if member.social_links.twitter %}
-                        <a href="{{ member.social_links.twitter }}" target="_blank" class="social-link">
+                        {% if member.social_twitter %}
+                        <a href="{{ member.social_twitter }}" target="_blank" class="social-link">
                             <i class="fab fa-twitter"></i>
                         </a>
                         {% endif %}
-                        {% if member.social_links.facebook %}
-                        <a href="{{ member.social_links.facebook }}" target="_blank" class="social-link">
+                        {% if member.social_facebook %}
+                        <a href="{{ member.social_facebook }}" target="_blank" class="social-link">
                             <i class="fab fa-facebook-f"></i>
                         </a>
                         {% endif %}
@@ -78,10 +100,10 @@
                     
                     <!-- Métadonnées -->
                     <div class="member-meta">
-                        {% if member.join_date %}
+                        {% if member.date_started %}
                         <p class="mb-2">
                             <span class="meta-label">Membre depuis:</span>
-                            {{ member.join_date|date:"F Y" }}
+                            {{ member.date_started|date:"F Y" }}
                         </p>
                         {% endif %}
                     </div>
@@ -101,6 +123,25 @@
                 {% else %}
                 <div class="alert alert-info">
                     Ce membre n'a pas encore rédigé de biographie.
+                </div>
+                {% endif %}
+                
+                <!-- Section Articles -->
+                {% if articles %}
+                <div class="article-list">
+                    <h4 class="mb-4">Publications</h4>
+                    
+                    <div class="list-group">
+                        {% for article in articles %}
+                        <div class="article-item">
+                            <a href="{% url 'public_article_detail' article.slug %}">{{ article.title }}</a>
+                            <div class="article-meta mt-1">
+                                {{ article.get_public_category_display }} • 
+                                {{ article.publish_at|date:"F Y" }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
                 {% endif %}
                 
