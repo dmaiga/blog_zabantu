@@ -1,3 +1,4 @@
+
 """
 Django settings for zabantu project.
 
@@ -17,10 +18,25 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_USER_MODEL = 'users.CustomUser'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/users/dashboard/'
 LOGOUT_REDIRECT_URL = 'login'
+
+
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "mail.zabantu.net"
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True  # SSL obligatoire avec port 465
+EMAIL_HOST_USER = "info@zabantu.net"
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Pour réception des messages du formulaire
+CONTACT_EMAIL = "info@zabantu.net" 
+SEND_COPY_TO_VISITOR = True
 
 
 # Quick-start development settings - unsuitable for production
@@ -31,9 +47,7 @@ SECRET_KEY = 'django-insecure-zo_o%3kom*%_cf14)m3e@5e2o_r5fw+5lf32w)^en^jm0%nq1u
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -88,17 +102,13 @@ WSGI_APPLICATION = 'zabantu.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['POSTGRES_DB'],
-        'USER': os.environ['POSTGRES_USER'],
-        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-        'HOST': os.environ['DB_HOST'],
-        'PORT': os.environ['DB_PORT'],
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

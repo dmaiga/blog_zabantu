@@ -1,4 +1,5 @@
 {% extends 'base_public.html' %}
+{% load static %}  
 
 {% block title %}Membres - Zabantu{% endblock %}
 
@@ -44,17 +45,15 @@
         {% for member in members %}
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card member-card h-100">
-                <img src="{{ member.profile_picture.url|default:'/static/profiles/default.png' }}" 
-                     class="card-img-top member-img" 
-                     alt="{{ member.first_name }} {{ member.last_name }}">
-                
+                        <img src="{% if member.profile_picture %}{{ member.profile_picture.url }}{% else %}{% static 'images/default-profile.png' %}{% endif %}" 
+     alt="{{ member.get_full_name }}" 
+     class="member-photo">
+  
                 <div class="card-body">
                     <h5 class="card-title">{{ member.first_name }} {{ member.last_name }}</h5>
                     
-                    {% if member.job_title or member.department %}
+                    {% if member.department %}
                     <h6 class="card-subtitle mb-2 text-muted">
-                        {{ member.job_title }}
-                        {% if member.job_title and member.department %} - {% endif %}
                         {{ member.department }}
                     </h6>
                     {% endif %}
@@ -77,7 +76,7 @@
                             </a>
                             {% endif %}
                             {% if member.social_twitter %}
-                            <a href="{{ member.social_twitter }}" target="_blank" class="social-icon">
+                            <a href="{{ member.social_facebook }}" target="_blank" class="social-icon">
                                 <i class="fab fa-twitter"></i>
                             </a>
                             {% endif %}

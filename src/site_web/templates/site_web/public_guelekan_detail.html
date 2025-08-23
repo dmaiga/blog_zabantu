@@ -126,6 +126,111 @@
         background-color: var(--zabantu-light);
         color: var(--zabantu-primary-dark);
     }
+    .associated-galleries {
+        margin: 4rem 0;
+        padding: 2rem 0;
+        border-top: 1px solid var(--zabantu-light);
+    }
+    
+    .galleries-title {
+        color: var(--zabantu-primary-dark);
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .galleries-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .gallery-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .gallery-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .gallery-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+    }
+    
+    .gallery-placeholder {
+        width: 100%;
+        height: 200px;
+        background: var(--zabantu-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--zabantu-gray);
+    }
+    
+    .gallery-content {
+        padding: 1.5rem;
+    }
+    
+    .gallery-title {
+        color: var(--zabantu-primary-dark);
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .gallery-description {
+        color: var(--zabantu-gray);
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+    
+    .gallery-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+    }
+    
+    .gallery-photo-count {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--zabantu-gray);
+        font-size: 0.9rem;
+    }
+    
+    .gallery-link {
+        color: var(--zabantu-primary);
+        text-decoration: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: color 0.2s;
+    }
+    
+    .gallery-link:hover {
+        color: var(--zabantu-primary-dark);
+    }
+    
+    .no-galleries {
+        text-align: center;
+        color: var(--zabantu-gray);
+        font-style: italic;
+        padding: 2rem;
+        background: var(--zabantu-light);
+        border-radius: 8px;
+    }
     
     @media (max-width: 768px) {
         .guelekan-detail {
@@ -205,6 +310,71 @@
             Télécharger le PDF complet
         </a>
     </div>
+    {% endif %}
+    
+    <!-- Section Galeries associées -->
+    {% if galleries %}
+    <section class="associated-galleries">
+        <h2 class="galleries-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 0.5rem;">
+                <path d="M4 16L4 17C4 18.6569 5.34315 20 7 20L17 20C18.6569 20 20 18.6569 20 17L20 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M4 8.00001L4 7.00001C4 5.34315 5.34315 4 7 4L17 4C18.6569 4 20 5.34315 20 7.00001L20 8.00001" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <rect x="1" y="8" width="22" height="8" rx="2" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="12" r="3" fill="currentColor"/>
+            </svg>
+            Galeries photos associées
+        </h2>
+        
+        <div class="galleries-grid">
+            {% for gallery in galleries %}
+            <div class="gallery-card">
+                {% if gallery.cover_image %}
+                <img src="{{ gallery.cover_image.url }}" 
+                     class="gallery-image" 
+                     alt="{{ gallery.title }}"
+                     loading="lazy">
+                {% else %}
+                <div class="gallery-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 16L4 17C4 18.6569 5.34315 20 7 20L17 20C18.6569 20 20 18.6569 20 17L20 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M4 8.00001L4 7.00001C4 5.34315 5.34315 4 7 4L17 4C18.6569 4 20 5.34315 20 7.00001L20 8.00001" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <rect x="1" y="8" width="22" height="8" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                    </svg>
+                </div>
+                {% endif %}
+                
+                <div class="gallery-content">
+                    <h3 class="gallery-title">{{ gallery.title }}</h3>
+                    
+                    {% if gallery.description %}
+                    <p class="gallery-description">
+                        {{ gallery.description|truncatewords:20 }}
+                    </p>
+                    {% endif %}
+                    
+                    <div class="gallery-meta">
+                        <span class="gallery-photo-count">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V8C1 7.46957 1.21071 6.96086 1.58579 6.58579C1.96086 6.21071 2.46957 6 3 6H7L9 3H15L17 6H21C21.5304 6 22.0391 6.21071 22.4142 6.58579C22.7893 6.96086 23 7.46957 23 8V19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            {{ gallery.photo_count }} photo(s)
+                        </span>
+                        
+                        <a href="{% url 'public_gallery_detail' gallery.slug %}" class="gallery-link">
+                            Voir la galerie
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
     {% endif %}
     
     <footer>

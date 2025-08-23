@@ -80,7 +80,7 @@ def dashboard_view(request):
 @login_required
 def create_user_view(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST, request.FILES) 
         if form.is_valid():
             form.save()
             messages.success(request, "Utilisateur créé avec succès!")
@@ -89,7 +89,6 @@ def create_user_view(request):
         form = CustomUserCreationForm()
     
     return render(request, 'users/register.html', {'form': form})
-
 @login_required
 def user_list_view(request):
     users = CustomUser.objects.all().order_by('role', 'last_name')
@@ -115,3 +114,39 @@ def create_member_view(request):
         form = CustomMemberCreationForm()
     return render(request, 'users/create_member.html', {'form': form})
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .forms import CustomUserUpdateForm
+from .models import CustomUser
+
+@login_required
+def update_user_view(request, pk):
+    user_to_update = get_object_or_404(CustomUser, pk=pk)
+    
+    # Vérification des permissions
+    if not request.user.is_admin and request.user.pk != user_to_update.pk:
+        messages.error(request, "Vous n'avez pas la permission de modifier cet utilisateur.")
+        return redirect('user_list')
+    
+    if request.method == 'POST':
+        form = CustomUserUpdateForm(request.POST, request.FILES, instance=user_to_update)
+        if form.is_valid():
+            updated_user = form.save()
+            
+            # Message différent selon qui est modifié
+            if request.user.pk == user_to_update.pk:
+                messages.success(request, "Votre profil a été mis à jour avec succès.")
+            else:
+                messages.success(request, f"Le profil de {updated_user.get_full_name()} a été mis à jour.")
+            
+            return redirect('user_list')
+    else:
+        form = CustomUserUpdateForm(instance=user_to_update)
+    
+    context = {
+        'form': form,
+        'user_to_update': user_to_update,
+        'is_self_update': request.user.pk == user_to_update.pk
+    }
+    return render(request, 'users/update_user.html', context)

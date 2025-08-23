@@ -119,50 +119,56 @@ class ArticleForm(forms.ModelForm):
             instance.save()
             self.save_m2m()
         return instance
-
-
-
+    
+# articles/forms.py
+# articles/forms.py
 from django import forms
-from tinymce.widgets import TinyMCE
 from .models import Guelekan
+from gallery.models import Gallery 
 
 class GuelekanForm(forms.ModelForm):
-    content = forms.CharField(
-        widget=TinyMCE(
-            attrs={
-                'cols': 80, 
-                'rows': 10,
-                'plugins': 'preview autolink visualblocks image media table help',
-                'toolbar': 'undo redo | styles | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | preview media | help',
-            }
-        ),
-        help_text="Utilisez l'éditeur pour formater votre contenu"
-    )
-    
-    publish_at = forms.DateTimeField(
+    galleries = forms.ModelMultipleChoiceField(
+        queryset=Gallery.objects.all(), 
+        widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
         required=False,
-        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-        label="Planifier la publication",
-        help_text="Laissez vide pour publier immédiatement"
+        label="Galeries associées"
     )
     
+    guests = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 3,
+            'placeholder': 'Entrez un invité par ligne\nExemple:\nDr. Jean Dupont\nProf. Marie Martin'
+        }),
+        required=False,
+        label="Invité(s)",
+        help_text="Liste des intervenants (un par ligne)"
+    )
+
     class Meta:
         model = Guelekan
         fields = [
-            'title', 'subtitle', 'cover_image', 'content', 
-            'pdf_file', 'status', 'publish_at', 'meta_title', 'meta_description'
+            'title', 'subtitle', 'content', 'status', 
+            'cover_image', 'pdf_file', 'guests', 'galleries',
+            'publish_at'  # Retirer meta_title et meta_description
         ]
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['status'].choices = [
-            ('draft', 'Brouillon'),
-            ('published', 'Publié'),
-        ]
-        self.fields['status'].initial = 'draft'
-    
-    def clean(self):
-        cleaned_data = super().clean()
-        if cleaned_data.get('status') == 'published' and not cleaned_data.get('cover_image'):
-            raise forms.ValidationError("Une image de couverture est requise pour la publication")
-        return cleaned_data
+        widgets = {
+            'publish_at': forms.DateTimeInput(attrs={
+                'type': 'datetime-local', 
+                'class': 'form-control'
+            }),
+            'title': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'placeholder': 'Titre du séminaire'
+            }),
+            'subtitle': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'placeholder': 'Sous-titre optionnel'
+            }),
+            'status': forms.Select(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control', 
+                'rows': 10,
+                'placeholder': 'Contenu du séminaire...'
+            }),
+        }

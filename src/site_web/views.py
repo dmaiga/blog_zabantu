@@ -91,125 +91,30 @@ def membre_detail(request, user_id):
     return render(request, 'site_web/public_membre_detail.html', context)
 
 
+# site_web/views.py
 
-
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import ContactForm
 
 def contact(request):
-    # Liste des partenaires institutionnels
-    partners = [
-        {
-            'name': "Université de Ségou",
-            'logo': "users/images/partenaires/iufp_segou.png",
-            'url': "#"  # Remplacez par l'URL réelle
-        },
-        {
-            'name': "Université de Ghana",
-            'logo': "users/images/partenaires/ghana.svg",
-            'url': "#"
-        },
-        {
-            'name': "Université Alassane Ouattara de Bouaké",
-            'logo': "users/images/partenaires/uni_ao.webp",
-            'url': "#"
-        },
-        {
-            'name': "Université de Mons",
-            'logo': "users/images/partenaires/uni_mons.svg",
-            'url': "#"
-        },
-        {
-            'name': "Université Libre de Bruxelles",
-            'logo': "users/images/partenaires/ulb.svg",
-            'url': "#"
-        },
-        {
-            'name': "Association pour la Promotion du Numérique en Afrique",
-            'logo': "users/images/partenaires/apna_logo.png",
-            'url': "#"
-        }
-    ]
-
-    # Coordonnées de contact
-    contact_info = {
-        'institution': "Campus universitaire de Badalabougou",
-        'address': "BP 1234 Bamako, Mali",
-        'phone': "+223 77 94 14 70",
-        'email': "info@zabantu.net",
-        'opening_hours': {
-            'weekdays': "Lundi - Vendredi : 8h - 17h",
-            'saturday': "Samedi : 9h - 13h"
-        }
-    }
-
-    # Traitement du formulaire
-    #if request.method == 'POST':
-    #    name = request.POST.get('name')
-    #    email = request.POST.get('email')
-    #    subject = request.POST.get('subject')
-    #    message = request.POST.get('message')
-#
-#   #    # Validation basique
-#   #    if not all([name, email, subject, message]):
-#   #        messages.error(request, "Veuillez remplir tous les champs obligatoires.")
-    #    else:
-    #        # Construction du sujet du mail
-    #        subject_map = {
-    #            'collaboration': "Proposition de collaboration",
-    #            'research': "Question de recherche",
-    #            'publication': "Demande concernant une publication",
-    #            'conference': "Invitation à une conférence",
-    #            'media': "Demande médiatique",
-    #            'other': "Demande de contact"
-    #        }
-    #        email_subject = f"[Contact Zabantu] {subject_map.get(subject, 'Demande')} de {name}"
-#
-#   #        # Construction du corps du mail
-#   #        email_body = f"""
-#   #        Nouveau message reçu via le formulaire de contact:
-    #        
-    #        Nom: {name}
-    #        Email: {email}
-    #        Sujet: {subject_map.get(subject, subject)}
-    #        
-    #        Message:
-    #        {message}
-    #        
-    #        ---
-    #        Cet email a été envoyé depuis le formulaire de contact de Zabantu.
-    #        """
-#
-#   #        try:
-#   #            # Envoi de l'email
-#   #            send_mail(
-    #                email_subject,
-    #                email_body,
-    #                settings.DEFAULT_FROM_EMAIL,
-    #                [settings.CONTACT_EMAIL],  # Configurez ceci dans vos settings
-    #                fail_silently=False,
-    #            )
-    #            
-    #            # Envoi d'une copie au visiteur
-    #            if settings.SEND_COPY_TO_VISITOR:
-    #                send_mail(
-    #                    f"Confirmation de votre message à Zabantu",
-    #                    f"Nous avons bien reçu votre message et y répondrons dans les plus brefs délais.\n\nVotre message:\n{message}",
-    #                    settings.DEFAULT_FROM_EMAIL,
-    #                    [email],
-    #                    fail_silently=True,
-    #                )
-    #            
-    #            messages.success(request, "Votre message a été envoyé avec succès!")
-    #            return redirect('contact')
-    #           
-    #       except Exception as e:
-    #           messages.error(request, f"Une erreur s'est produite lors de l'envoi du message: {str(e)}")
-
-    # Coordonnées pour la carte (Badalabougou, Mali)
+    
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()  # Enregistre dans la BD
+            messages.success(request, "Merci ! Votre message a été enregistré ✅")
+            return redirect('contact')  # recharge la page
+        else:
+            messages.error(request, "Veuillez corriger les erreurs dans le formulaire.")
+    else:
+        form = ContactForm()
+    
+      # Coordonnées pour la carte
     map_embed_url = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3859.227623693815!2d-7.987846684716715!3d12.672381921394377!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDQwJzIwLjYiTiA3wrA1OScxNS4xIlc!5e1!3m2!1sfr!2sfr!4v1620000000000!5m2!1sfr!2sfr"
 
     context = {
-        'partners': partners,
-        'contact_info': contact_info,
+        'form': form,  # ton formulaire
         'map_embed_url': map_embed_url,
         'page_title': "Contact - Zabantu",
         'social_links': {
@@ -219,10 +124,7 @@ def contact(request):
             'researchgate': "#"
         }
     }
-
     return render(request, 'site_web/public_contact.html', context)
-
-
 def liste_galeries(request):
     """Affiche la liste des galeries (version publique)"""
     galeries_list = Gallery.objects.all().order_by('-created_at')
@@ -279,95 +181,29 @@ def detail_photo(request, pk):
 #------------------------------------------------------------------------------
 #05_08_2025
 
+from django.contrib.auth import get_user_model
+import random
 
 User = get_user_model()
 
 def about_view(request):
-    # Section Identité - Données statiques
-    identity_data = {
-        'name': "Groupe de recherche Zabantu",
-        'subtitle': "« Économie-Guerre-État »",
-        'description': "Nom inspiré d'une plante locale mandingue, Zabantu est un groupe de chercheurs en sciences sociales travaillant sur le développement économique et social. C'est de ce fait un groupe pluri et interdisciplinaire, qui est ouvert à tous les chercheurs et chercheuses du monde dans l'objectif d'avoir une recherche plus inclusive et plus ancrée.",
-        'vision': "Vers une recherche ancrée dans les dynamiques économiques et sociales",
-        'research_domains': [
-            "Économie politique",
-            "Conflits et sécurité",
-            "Développement social",
-            "Politiques publiques",
-            "Études africaines"
-        ],
-        'activities': {
-            'guelekan': {
-                'title': "Séminaire Gɛlɛkan",
-                'description': [
-                    "Gɛlɛkan est une tribune scientifique de collaboration et de partage d'expérience et de connaissance.",
-                    "Inspiré de la tribune de sagesse bamanan réservés aux ainés, Gɛlɛkan est un espace de communication scientifique permettant aux chercheurs de partager les résultats de leurs recherches accompli ou en cours.",
-                    "Les séminaires Gɛlɛkan portent aussi sur les thématiques de formation comme la méthodologie de recherche et les astuces de publications académiques."
-                ]
-            }
-        }
-    }
-
-    # Section Équipe - Récupération des membres actifs
-    cache_key = 'active_team_members'
-    active_members = cache.get(cache_key)
+    # Récupérer tous les membres actifs
+    active_members = list(User.objects.filter(
+        is_active=True,
+        role__in=['moderateur', 'membre']
+    ))
     
-    if not active_members:
-        active_members = User.objects.filter(
-            is_active=True,
-            role__in=['admin', 'moderateur', 'membre']
-        ).exclude(
-            profile_picture=''
-        ).order_by('-date_started')
-        
-        # Mise en cache pour 1 heure
-        cache.set(cache_key, active_members, 3600)
-
-    # Section Partenaires - Liste des partenaires avec leurs logos
-    partners = [
-        {
-            'name': "Université de Ségou",
-            'logo': "users/images/partenaires/ufp_segou.png",
-            'url': "#"  # Remplacez par l'URL réelle
-        },
-        {
-            'name': "Université de Ghana",
-            'logo': "users/images/partenaires/ghana.svg",
-            'url': "#"
-        },
-        {
-            'name': "Université Alassane Ouattara de Bouaké",
-            'logo': "users/images/partenaires/uni_ao.webp",
-            'url': "#"
-        },
-        {
-            'name': "Université de Mons",
-            'logo': "users/images/partenaires/uni_mons.svg",
-            'url': "#"
-        },
-        {
-            'name': "Université Libre de Bruxelles",
-            'logo': "users/images/partenaires/ulb.svg",
-            'url': "#"
-        },
-        {
-            'name': "Association pour la Promotion du Numérique en Afrique",
-            'logo': "users/images/partenaires/apna_logo.png",
-            'url': "#"
-        }
-    ]
-
+    # Sélectionner 4 membres aléatoires si on en a assez
+    if len(active_members) > 4:
+        active_members = random.sample(active_members, 4)
+    else:
+        # Si moins de 4 membres, prendre tous les membres disponibles
+        active_members = active_members[:4]
+    
     context = {
-        'identity_data': identity_data,
         'active_members': active_members,
-        'partners': partners,
-        'MEDIA_URL': settings.MEDIA_URL,
-        'STATIC_URL': settings.STATIC_URL
     }
-
     return render(request, 'site_web/public_about.html', context)
-
-
 
 
 #05_08
@@ -558,22 +394,60 @@ def public_member_list(request):
     })
 
 
+# articles/views.py
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+from django.core.paginator import Paginator
+from articles.models import Guelekan
 
 def public_guelekan_list(request):
-    # Récupérer seulement les Guelekan publiés
-    guelekans = Guelekan.objects.filter(status='published').order_by('-publish_at')
+    guelekans = Guelekan.objects.filter(
+        status='published',
+        publish_at__lte=timezone.now()
+    ).order_by('-publish_at')
     
-    # Pagination (10 éléments par page)
-    paginator = Paginator(guelekans, 10)
+    paginator = Paginator(guelekans, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
     return render(request, 'site_web/public_guelekan_list.html', {
         'page_obj': page_obj,
+        'timezone': timezone
     })
 
 def public_guelekan_detail(request, slug):
-    guelekan = get_object_or_404(Guelekan, slug=slug, status='published')
+    guelekan = get_object_or_404(
+        Guelekan, 
+        slug=slug, 
+        status='published',
+        publish_at__lte=timezone.now()
+    )
+    
+    # Récupérer les galeries associées avec leurs photos
+    galleries = guelekan.galleries.all().prefetch_related('photos')
+    
     return render(request, 'site_web/public_guelekan_detail.html', {
         'guelekan': guelekan,
+        'galleries': galleries,
+        'timezone': timezone
     })
+
+from django.shortcuts import redirect
+from django.contrib import messages
+from .forms import NewsletterForm
+from .models import NewsletterSubscriber
+
+def newsletter_subscribe(request):
+    if request.method == 'POST':
+        form = NewsletterForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            if not NewsletterSubscriber.objects.filter(email=email).exists():
+                form.save()
+                messages.success(request, " Vous avez été ajouté à la newsletter avec succès.")
+            else:
+                messages.info(request, " Vous êtes déjà inscrit à la newsletter.")
+        else:
+            messages.error(request, " Veuillez entrer un email valide.")
+    # Toujours rediriger vers la page d’où vient le formulaire
+    return redirect(request.META.get('HTTP_REFERER', 'index'))

@@ -40,13 +40,13 @@ class CustomUser(AbstractUser):
         blank=True, 
         null=True
     )
+    # Dans users/models.py
     profile_picture = models.ImageField(
-        _('photo de profil'),
-        upload_to='profiles/%Y/%m/%d/',
-        blank=True, 
-        null=True,
-        default='profiles/default.png'
-    )
+    _('photo de profil'),
+    upload_to='profiles/',  
+    blank=True,
+    default=None 
+        )
     
     # Profession
     bio = models.TextField(_('biographie'), blank=True, null=True)

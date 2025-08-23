@@ -19,3 +19,5 @@ media/
 
 # Autres
 .DS_Store
+
+id_rsa
