@@ -22,4 +22,6 @@ urlpatterns = [
     path('profil/mot-de-passe/', CustomPasswordChangeView.as_view(), name='password_change'),
 
 #08_08
+#17_08
+    path('update/<int:pk>/', views.update_user_view, name='update_user'),
 ]

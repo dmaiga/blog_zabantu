@@ -209,8 +209,8 @@
                     <i class="fas fa-map-marker-alt"></i>
                 </div>
                 <h4>Notre adresse</h4>
-                <p>{{ contact_info.institution }}</p>
-                <p>{{ contact_info.address }}</p>
+                <p>Faculté des Sciences Économiques et de Gestion (FSEG)</p>
+              
             </div>
             
             <!-- Téléphone -->
@@ -219,8 +219,9 @@
                     <i class="fas fa-phone"></i>
                 </div>
                 <h4>Téléphone</h4>
-                <p><a href="tel:{{ contact_info.phone }}">{{ contact_info.phone }}</a></p>
-                <p>Lundi-Vendredi: 8h-17h</p>
+                <p><a href="#">+223 77 94 14 70</a></p>
+                <p><a href="#">+223 76 63 45 15</a></p>
+                <p>Lundi-Samedi: 8h-17h</p>
             </div>
             
             <!-- Email -->
@@ -229,16 +230,17 @@
                     <i class="fas fa-envelope"></i>
                 </div>
                 <h4>Email</h4>
-                <p><a href="mailto:{{ contact_info.email }}">{{ contact_info.email }}</a></p>
+                <p><a href="info@zabantu.net">info@zabantu.net</a></p>
                 <div class="social-links">
-                    <a href="{{ social_links.linkedin }}" class="social-link" target="_blank">
-                        <i class="fab fa-linkedin-in"></i>
+                    <a href="https://www.linkedin.com/company/zabantu-ecs/posts/?feedView=all" class="social-link" target="_blank">
+                        <i class="fab fa-linkedin-in"></i>  
                     </a>
-                    <a href="{{ social_links.twitter }}" class="social-link" target="_blank">
+                    <a href="https://www.facebook.com/zabantu.ecs" class="social-link" target="_blank">
+                        <i class="fab fa-facebook-f"></i> 
+                    </a>
+                    
+                    <a href="#" class="social-link" target="_blank">
                         <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="{{ social_links.facebook }}" class="social-link" target="_blank">
-                        <i class="fab fa-facebook-f"></i>
                     </a>
                 </div>
             </div>
@@ -249,37 +251,24 @@
     <section class="form-section">
         <h3 class="form-title">Envoyez-nous un message</h3>
         <form method="post" class="needs-validation" novalidate>
-            {% csrf_token %}
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label for="name" class="form-label">Nom complet*</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
-                </div>
-                <div class="col-md-6">
-                    <label for="email" class="form-label">Email*</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                </div>
-                <div class="col-12">
-                    <label for="subject" class="form-label">Sujet*</label>
-                    <select class="form-select" id="subject" name="subject" required>
-                        <option value="" selected disabled>Sélectionnez un sujet</option>
-                        <option value="collaboration">Collaboration</option>
-                        <option value="information">Demande d'information</option>
-                        <option value="media">Demande médiatique</option>
-                        <option value="other">Autre</option>
-                    </select>
-                </div>
-                <div class="col-12">
-                    <label for="message" class="form-label">Message*</label>
-                    <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
-                </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-submit">
-                        <i class="fas fa-paper-plane me-2"></i>Envoyer le message
-                    </button>
-                </div>
-            </div>
-        </form>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="row g-3">
+        <div class="col-md-6">{{ form.name.label_tag }}{{ form.name }}</div>
+        <div class="col-md-6">{{ form.email.label_tag }}{{ form.email }}</div>
+        <div class="col-12">{{ form.subject.label_tag }}{{ form.subject }}</div>
+        <div class="col-12">{{ form.message.label_tag }}{{ form.message }}</div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-submit">
+                <i class="fas fa-paper-plane me-2"></i>Envoyer le message
+            </button>
+        </div>
+    </div>
+</form>
+      {% for message in messages %}
+<div class="alert alert-{{ message.tags }} mt-3">{{ message }}</div>
+{% endfor %}
+
     </section>
 
     <!-- Section 3: FAQ -->
@@ -343,22 +332,5 @@
             }, false);
         });
     })();
-
-    // Pré-remplissage intelligent du formulaire
-    document.getElementById('subject').addEventListener('change', function() {
-        const messageField = document.getElementById('message');
-        const nameField = document.getElementById('name').value || '[Votre nom]';
-        
-        const templates = {
-            'collaboration': `Cher(e) Responsable,\n\nJe me permets de vous contacter concernant une possible collaboration dans le domaine de [précisez]. Mon travail porte sur [décrivez brièvement].\n\nJe pense que nos travaux pourraient se compléter sur :\n- Point 1\n- Point 2\n\nCordialement,\n${nameField}`,
-            'information': `Bonjour,\n\nJe souhaiterais obtenir des informations concernant [précisez].\n\nPourriez-vous m'indiquer :\n- Question 1\n- Question 2\n\nMerci par avance,\n${nameField}`,
-            'media': `Bonjour,\n\nJe représente [Média] et souhaiterais vous interviewer à propos de [sujet].\n\nDisponibilités :\n- Option 1\n- Option 2\n\nCordialement,\n${nameField}`
-        };
-        
-        if (templates[this.value]) {
-            messageField.value = templates[this.value];
-            messageField.focus();
-        }
-    });
 </script>
 {% endblock %}

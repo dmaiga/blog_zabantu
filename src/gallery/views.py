@@ -84,25 +84,46 @@ def gallery_delete(request, slug):
     return render(request, 'gallery/gallery_confirm_delete.html', {'gallery': gallery})
 
 # Vues CRUD Photo
+import os
 @login_required
 def photo_create(request):
     gallery_id = request.GET.get('gallery')
     initial = {'gallery': gallery_id} if gallery_id else {}
-    
+
     if request.method == 'POST':
         form = PhotoForm(request.POST, request.FILES)
-        if form.is_valid():
-            photo = form.save(commit=False)
-            photo.uploaded_by = request.user
-            photo.save()
-            messages.success(request, 'Photo ajoutée!')
+        files = request.FILES.getlist('images')  # ← Changer 'image' par 'images'
+
+        if form.is_valid() and files:  # ← Vérifier qu'il y a des fichiers
+            gallery = form.cleaned_data.get('gallery')
+            title = form.cleaned_data.get('title')
+            is_standalone = form.cleaned_data.get('is_standalone')
+
+            photos_created = 0
+            for f in files:
+                # Utiliser le nom du fichier comme titre si aucun titre n'est fourni
+                photo_title = title or os.path.splitext(f.name)[0]
+                
+                Photo.objects.create(
+                    title=photo_title,
+                    image=f,
+                    gallery=gallery,
+                    is_standalone=is_standalone,
+                    uploaded_by=request.user
+                )
+                photos_created += 1
             
-            if photo.gallery:
-                return redirect('gallery_detail', slug=photo.gallery.slug)
-            return redirect('photo_detail', pk=photo.pk)
+            messages.success(request, f'{photos_created} photo(s) ajoutée(s)!')
+
+            if gallery:
+                return redirect('gallery_detail', slug=gallery.slug)
+            return redirect('photo_list')
+        else:
+            if not files:
+                messages.error(request, 'Veuillez sélectionner au moins une image.')
     else:
         form = PhotoForm(initial=initial)
-    
+
     return render(request, 'gallery/photo_form.html', {'form': form})
 
 @login_required
@@ -146,3 +167,5 @@ def photo_delete(request, pk):
         return redirect('photo_list')
     
     return render(request, 'gallery/photo_confirm_delete.html', {'photo': photo})
+
+

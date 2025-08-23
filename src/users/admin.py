@@ -7,7 +7,7 @@ class CustomUserAdmin(UserAdmin):
     model = CustomUser
     list_display = ('username', 'email', 'role', 'is_active')
     list_filter = ('role', 'is_active', 'is_superuser')
-    search_fields = ('username', 'email', 'first_name', 'last_name')
+    search_fields = ('username', 'email', 'nom', 'prenom')
     ordering = ('date_joined',)
 
     fieldsets = UserAdmin.fieldsets + (

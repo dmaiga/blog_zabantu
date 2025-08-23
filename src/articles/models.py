@@ -99,17 +99,24 @@ class Article(models.Model):
             return 'Publication Académique'
         return self.get_category_display()
 
+
 def guelekan_upload_path(instance, filename):
     return f'guelekan/files/{uuid.uuid4()}_{filename}'
+# articles/models.py
+from django.db import models
+from tinymce.models import HTMLField
+from django.utils.text import Truncator, slugify
+from django.contrib.auth import get_user_model
+import re
+from django.utils import timezone
 
-
-
-
-
-
-
-
-
+User = get_user_model()
+# articles/models.py
+from django.db import models
+from tinymce.models import HTMLField
+from django.utils.text import Truncator, slugify
+from django.utils import timezone
+import re
 
 class Guelekan(models.Model):
     STATUS_CHOICES = (
@@ -118,16 +125,31 @@ class Guelekan(models.Model):
     )
 
     title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    slug = models.SlugField(max_length=255, unique=True, editable=False)  # editable=False pour le cacher
     subtitle = models.CharField(max_length=500, blank=True)
     content = HTMLField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
 
     cover_image = models.ImageField(upload_to='guelekan/covers/', blank=True, null=True)
-    pdf_file = models.FileField(upload_to=guelekan_upload_path, blank=True, null=True)
+    pdf_file = models.FileField(upload_to='guelekan/pdfs/%Y/%m/%d/', blank=True, null=True)
 
-    meta_title = models.CharField(max_length=60, blank=True)
-    meta_description = models.CharField(max_length=160, blank=True)
+    # Relation vers les galeries
+    galleries = models.ManyToManyField(
+        'gallery.Gallery',
+        blank=True,
+        verbose_name="Galeries associées",
+        help_text="Sélectionnez les galeries de photos à associer à ce séminaire"
+    )
+
+    # Champ pour les invités (speakers/participants)
+    guests = models.TextField(
+        blank=True,
+        verbose_name="Invité(s)",
+        help_text="Liste des invités/intervenants (un par ligne)"
+    )
+
+    meta_title = models.CharField(max_length=60, blank=True, editable=False)  # editable=False
+    meta_description = models.CharField(max_length=160, blank=True, editable=False)  # editable=False
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -136,21 +158,23 @@ class Guelekan(models.Model):
         blank=True,
         help_text="Date de publication programmée"
     )
+
     class Meta:
         ordering = ['-created_at']
+        verbose_name = "Séminaire Guelekan"
+        verbose_name_plural = "Séminaires Guelekan"
 
     def __str__(self):
         return self.title
 
-    def is_published(self):
-        return self.status == 'published'
+    def get_guests_list(self):
+        """Retourne la liste des invités sous forme de liste"""
+        if self.guests:
+            return [guest.strip() for guest in self.guests.split('\n') if guest.strip()]
+        return []
 
     def save(self, *args, **kwargs):
-        if not self.meta_title:
-            self.meta_title = Truncator(self.title).chars(60)
-        if not self.meta_description:
-            clean_content = re.sub('<[^<]+?>', '', self.content)
-            self.meta_description = Truncator(clean_content).chars(160)
+        # Générer le slug automatiquement
         if not self.slug:
             base_slug = slugify(self.title)
             slug = base_slug
@@ -159,4 +183,24 @@ class Guelekan(models.Model):
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug
+        
+        # Générer les métadonnées automatiquement
+        if not self.meta_title:
+            self.meta_title = Truncator(self.title).chars(60)
+        if not self.meta_description:
+            # Nettoyer le HTML du contenu
+            clean_content = re.sub('<[^<]+?>', '', self.content)
+            # Utiliser le sous-titre si disponible, sinon le contenu
+            description_source = self.subtitle if self.subtitle else clean_content
+            self.meta_description = Truncator(description_source).chars(160)
+
         super().save(*args, **kwargs)
+    
+    def is_visible(self):
+        """Vérifie si l'article est publié ET que la date de publication est passée"""
+        return (self.status == 'published' and 
+                (self.publish_at is None or self.publish_at <= timezone.now()))
+    
+    def is_published(self):
+        """Alias pour la compatibilité"""
+        return self.is_visible()

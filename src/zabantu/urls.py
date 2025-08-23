@@ -32,7 +32,6 @@ urlpatterns = [
     path('events/', include('events.urls')),
     path('gallery/', include('gallery.urls')),
     
-    path('tinymce/', include('tinymce.urls')),
     
 ]
 if settings.DEBUG:

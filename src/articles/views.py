@@ -173,42 +173,66 @@ def guelekan_list(request):
         }
     })
 
+
+# articles/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Guelekan
+from .forms import GuelekanForm
+
 @login_required
 def guelekan_create(request):
     if request.method == 'POST':
         form = GuelekanForm(request.POST, request.FILES)
         if form.is_valid():
-            guelekan = form.save(commit=False)
-            guelekan.slug = generate_guelekan_slug(guelekan.title)
-            guelekan.save()
-            messages.success(request, "Le Guelekan a été créé avec succès.")
+           
+            guelekan = form.save()
+            
+            messages.success(request, 'Séminaire créé avec succès!')
             return redirect('guelekan_detail', slug=guelekan.slug)
     else:
         form = GuelekanForm()
+    
     return render(request, 'articles/guelekan_form.html', {'form': form})
 
 @login_required
 def guelekan_update(request, slug):
     guelekan = get_object_or_404(Guelekan, slug=slug)
-
-    if guelekan.is_published() and not request.user.is_superuser:
-        messages.error(request, "Les Guelekan publiés ne peuvent plus être modifiés.")
-        return redirect('guelekan_detail', slug=guelekan.slug)
-
+    
     if request.method == 'POST':
         form = GuelekanForm(request.POST, request.FILES, instance=guelekan)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Le Guelekan a été mis à jour avec succès.")
+            
+            guelekan = form.save()
+            
+            messages.success(request, 'Séminaire mis à jour!')
             return redirect('guelekan_detail', slug=guelekan.slug)
     else:
         form = GuelekanForm(instance=guelekan)
-    return render(request, 'articles/guelekan_form.html', {'form': form, 'is_edit': True})
+    
+    return render(request, 'articles/guelekan_form.html', {
+        'form': form,
+        'guelekan': guelekan
+    })
+
+
+from django.utils import timezone
+from .models import Guelekan
 
 @login_required
 def guelekan_detail(request, slug):
     guelekan = get_object_or_404(Guelekan, slug=slug)
-    return render(request, 'articles/guelekan_detail.html', {'guelekan': guelekan})
+    
+    # Récupérer toutes les galeries associées avec leurs photos
+    galleries = guelekan.galleries.all().prefetch_related('photos')
+    
+    return render(request, 'articles/guelekan_detail.html', {
+        'guelekan': guelekan,
+        'galleries': galleries,
+        'timezone': timezone
+    })
+
 
 @login_required
 def guelekan_delete(request, slug):

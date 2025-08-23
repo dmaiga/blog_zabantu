@@ -2,6 +2,12 @@
 {% block content %}
 <div class="container mt-4">
   <h2>Liste des utilisateurs</h2>
+   <a href="{% url 'create_member' %}" class="btn btn-success">
+              <i class="fas fa-plus me-1"></i> Créer
+            </a>
+
+
+  </a>          
   <table class="table table-bordered table-striped mt-3">
     <thead class="table-light">
       <tr>
@@ -21,6 +27,7 @@
         <td>{{ user.get_role_display }}</td>
         <td>
           <a href="{% url 'user_detail' user.id %}" class="btn btn-sm btn-outline-primary">Détails</a>
+            <a href="{% url 'update_user' user.pk %}" class="btn btn-success"> modifier</a>
         </td>
       </tr>
       {% empty %}

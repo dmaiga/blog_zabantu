@@ -38,6 +38,15 @@
       padding: 1rem 0;
       font-size: 1.05rem;
     }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: white !important;
+      margin-right: 2rem;
+    }
+      .navbar-brand:hover {
+      color: var(--zabantu-light) !important;
+    }
 
     .navbar-brand img {
       height: 70px;
@@ -58,7 +67,7 @@
 
     .nav-link {
       color: white !important;
-      font-weight: 500;
+      font-weight: 700;
       padding: 0.6rem 1rem;
       transition: 0.3s;
       border-radius: 5px;
@@ -261,19 +270,18 @@
     <div class="container">
       <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-          <a class="navbar-brand d-flex justify-content-center" href="{% url 'home' %}">
-            <img src="/static/site_web/images/logo.png" alt="Zabantu" />
+          <!-- Logo à gauche -->
+          <a class="navbar-brand" href="{% url 'home' %}">
+            ZABANTU
           </a>
 
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <span class="navbar-toggler-icon"></span>
           </button>
 
-          <div class="collapse navbar-collapse justify-content-center" id="mainNav">
-            <ul class="navbar-nav mb-2 mb-lg-0 text-center">
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'home' %}">Accueil</a>
-              </li>
+          <div class="collapse navbar-collapse" id="mainNav">
+            <!-- Liens de navigation au centre -->
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 text-center">
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                   Publications
@@ -284,8 +292,6 @@
                   <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=policy">Policy Briefs</a></li>
                   <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=analyse">Analyses</a></li>
                   <li><a class="dropdown-item" href="{% url 'public_article_list' %}?type=rapport">Rapports</a></li>
-                 
-               
                 </ul>
               </li>
               <li class="nav-item">
@@ -294,30 +300,23 @@
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'public_guelekan_list' %}">Séminaires Gɛlɛkan</a>
               </li>
-
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'about' %}">A propos</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'liste_galeries' %}">Galerie</a>
               </li>
-              
-              <li class="nav-item">
-                <a class="nav-link" href="#">Opportunités</a>
-              </li>
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'contact' %}">Contact</a>
               </li>
-              
             </ul>
 
-            <div class="d-flex align-items-center ms-auto justify-content-center">
-              <form class="d-flex search-form me-3" action="{% url 'public_article_list' %}" method="get">
+            <!-- Barre de recherche à droite -->
+            <div class="d-flex">
+              <form class="d-flex search-form" action="{% url 'public_article_list' %}" method="get">
                 <input class="form-control me-2" type="search" name="q" placeholder="Rechercher…" aria-label="Rechercher" />
                 <button class="btn" type="submit"><i class="fas fa-search"></i></button>
               </form>
-
-             
             </div>
           </div>
         </div>

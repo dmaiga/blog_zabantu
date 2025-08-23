@@ -1,3 +1,4 @@
+# gallery/models.py
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
@@ -54,7 +55,7 @@ class Gallery(models.Model):
                 num += 1
             self.slug = unique_slug
         
-        # Si nouvelle galerie et created_by non défini (dans l'admin par exemple)
+        # Si nouvelle galerie et created_by non défini
         if not self.pk and not self.created_by and hasattr(self, 'request_user'):
             self.created_by = self.request_user
         
@@ -69,7 +70,6 @@ class Gallery(models.Model):
         from django.urls import reverse
         return reverse('gallery_detail', kwargs={'slug': self.slug})
 
-
 class Photo(models.Model):
     gallery = models.ForeignKey(
         Gallery, 
@@ -83,11 +83,6 @@ class Photo(models.Model):
         max_length=200, 
         verbose_name="Titre",
         help_text="Titre descriptif de la photo"
-    )
-    caption = models.TextField(
-        blank=True, 
-        verbose_name="Légende",
-        help_text="Description détaillée de la photo"
     )
     image = models.ImageField(
         upload_to='galleries/photos/%Y/%m/%d/',
