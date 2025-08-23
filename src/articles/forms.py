@@ -122,9 +122,14 @@ class ArticleForm(forms.ModelForm):
     
 # articles/forms.py
 # articles/forms.py
+
 from django import forms
 from .models import Guelekan
-from gallery.models import Gallery 
+from gallery.models import Gallery
+# articles/forms.py
+from django import forms
+from .models import Guelekan
+from gallery.models import Gallery
 
 class GuelekanForm(forms.ModelForm):
     galleries = forms.ModelMultipleChoiceField(
@@ -137,8 +142,8 @@ class GuelekanForm(forms.ModelForm):
     guests = forms.CharField(
         widget=forms.Textarea(attrs={
             'class': 'form-control',
-            'rows': 3,
-            'placeholder': 'Entrez un invité par ligne\nExemple:\nDr. Jean Dupont\nProf. Marie Martin'
+            'rows': 5,
+            'placeholder': 'Entrez un invité par ligne\nExemple:\n Jean G Kamaté\n Mahamadou Aroubi \n Abdoulaye Haidara'
         }),
         required=False,
         label="Invité(s)",
@@ -147,10 +152,11 @@ class GuelekanForm(forms.ModelForm):
 
     class Meta:
         model = Guelekan
+        # Seulement les champs que l'utilisateur doit remplir
         fields = [
             'title', 'subtitle', 'content', 'status', 
             'cover_image', 'pdf_file', 'guests', 'galleries',
-            'publish_at'  # Retirer meta_title et meta_description
+            'publish_at'
         ]
         widgets = {
             'publish_at': forms.DateTimeInput(attrs={

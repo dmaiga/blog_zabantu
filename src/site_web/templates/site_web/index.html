@@ -303,7 +303,6 @@ Economy | Conflict | State
     </div>
 </section>
 
-
 <!-- Section Séminaire Gɛlɛkan en vedette -->
 {% if featured_seminar %}
 <div class="container-fluid px-0 mb-5">
@@ -324,7 +323,7 @@ Economy | Conflict | State
                 <!-- Contenu texte -->
                 <div class="col-md-7">
                     <div class="seminar-content">
-                        <span class="badge bg-primary seminar-badge">{{ featured_seminar.get_category_display }}</span>
+                        <span class="badge bg-primary seminar-badge">Séminaire</span>
                         <h4 class="seminar-title">Dernier Séminaire Gɛlɛkan: {{ featured_seminar.title }}</h4>
                         
                         <div class="d-flex align-items-center seminar-meta text-muted">
@@ -332,13 +331,28 @@ Economy | Conflict | State
                                 <i class="fas fa-calendar-alt me-1"></i>
                                 {{ featured_seminar.created_at|date:"d F Y" }}
                             </div>
-                            <div>
-                                <i class="fas fa-user-edit me-1"></i>
-                                {{ featured_seminar.author.get_full_name }}
-                            </div>
                         </div>
+                          {% if featured_seminar.get_guests_list %}
+                    <div class="guelekan-meta-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="meta-icon">
+                            <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2"/>
+                            <path d="M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>
+                            Intervenant: 
+  {% for guest in featured_seminar.get_guests_list %}
+    {{ guest|capfirst }}{% if not forloop.last %}, {% endif %}
+  {% endfor %}
+</span>
+
                         
+                    </div>
+                    {% endif %}
+                        {% if featured_seminar.subtitle %}
+                        <p class="seminar-excerpt">{{ featured_seminar.subtitle|truncatewords:20 }}</p>
+                        {% else %}
                         <p class="seminar-excerpt">{{ featured_seminar.content|striptags|truncatewords:20 }}</p>
+                        {% endif %}
                         
                         <div class="mt-auto">
                             <span class="btn btn-primary btn-sm seminar-btn">

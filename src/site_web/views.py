@@ -353,35 +353,6 @@ def public_event_detail(request, pk):
         'similar_events': similar_events,
     })
 
-
-
-class HomeView(TemplateView):
-    template_name = 'site_web/index.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        # Derniers articles publiés (toutes catégories)
-        context['latest_articles'] = [
-            article for article in 
-            Article.objects.order_by('-created_at')[:4]
-            if article.is_published()
-        ]
-        
-        # Événements à venir
-        context['upcoming_events'] = Event.objects.filter(
-            is_published=True,
-            date__gte=timezone.now()
-        ).order_by('date')[:3]
-         # Mise en avant spéciale (ex: dernier séminaire)
-        context['featured_seminar'] = Guelekan.objects.filter(
-            
-            status='published'
-        ).order_by('-created_at').first()
-        
-        return context
-    
-
 def public_member_list(request):
     """Liste des membres publics"""
     members = CustomUser.objects.filter(
@@ -393,8 +364,33 @@ def public_member_list(request):
         'members': members
     })
 
+class HomeView(TemplateView):
+    template_name = 'site_web/index.html'
 
-# articles/views.py
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Derniers articles publiés - version optimisée
+        context['latest_articles'] = Article.objects.filter(
+            status='published',
+           
+        ).order_by('-created_at')[:4]
+        
+        # Événements à venir
+        context['upcoming_events'] = Event.objects.filter(
+            is_published=True,
+            date__gte=timezone.now()
+        ).order_by('date')[:3]
+        
+        # Mise en avant spéciale - version optimisée
+        context['featured_seminar'] = Guelekan.objects.filter(
+            status='published',
+           
+        ).order_by('-created_at').first()
+        
+        return context
+
+
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -403,7 +399,7 @@ from articles.models import Guelekan
 def public_guelekan_list(request):
     guelekans = Guelekan.objects.filter(
         status='published',
-        publish_at__lte=timezone.now()
+        
     ).order_by('-publish_at')
     
     paginator = Paginator(guelekans, 12)
@@ -415,22 +411,27 @@ def public_guelekan_list(request):
         'timezone': timezone
     })
 
+from django.db.models import Count
+
 def public_guelekan_detail(request, slug):
     guelekan = get_object_or_404(
         Guelekan, 
         slug=slug, 
         status='published',
-        publish_at__lte=timezone.now()
     )
     
-    # Récupérer les galeries associées avec leurs photos
-    galleries = guelekan.galleries.all().prefetch_related('photos')
     
-    return render(request, 'site_web/public_guelekan_detail.html', {
+    galleries = guelekan.galleries.all().prefetch_related('photos').annotate(
+        annotated_photo_count=Count("photos")  
+    )
+    
+    context = {
         'guelekan': guelekan,
         'galleries': galleries,
-        'timezone': timezone
-    })
+    }
+    
+    return render(request, 'site_web/public_guelekan_detail.html', context)
+
 
 from django.shortcuts import redirect
 from django.contrib import messages

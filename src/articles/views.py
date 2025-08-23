@@ -173,8 +173,9 @@ def guelekan_list(request):
         }
     })
 
+
 # articles/views.py
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Guelekan
@@ -185,9 +186,9 @@ def guelekan_create(request):
     if request.method == 'POST':
         form = GuelekanForm(request.POST, request.FILES)
         if form.is_valid():
-            guelekan = form.save(commit=False)
-            guelekan.save()
-            form.save_m2m()  # Important pour les relations ManyToMany
+           
+            guelekan = form.save()
+            
             messages.success(request, 'Séminaire créé avec succès!')
             return redirect('guelekan_detail', slug=guelekan.slug)
     else:
@@ -202,8 +203,9 @@ def guelekan_update(request, slug):
     if request.method == 'POST':
         form = GuelekanForm(request.POST, request.FILES, instance=guelekan)
         if form.is_valid():
+            
             guelekan = form.save()
-            form.save_m2m()  
+            
             messages.success(request, 'Séminaire mis à jour!')
             return redirect('guelekan_detail', slug=guelekan.slug)
     else:
@@ -213,6 +215,7 @@ def guelekan_update(request, slug):
         'form': form,
         'guelekan': guelekan
     })
+
 
 from django.utils import timezone
 from .models import Guelekan
